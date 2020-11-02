@@ -1,0 +1,14 @@
+{
+  "generator-next-basic": {
+    "promptValues": {
+      "name": "Learnground",
+      "version": "1.0.0",
+      "description": "Learnground Tesis",
+      "author_name": "Gonzalo Rascon",
+      "author_email": "gonzarascon@gmail.com",
+      "author_url": "https://www.gonzarascon.com",
+      "repo_url": "",
+      "git_url": ""
+    }
+  }
+}

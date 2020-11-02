@@ -1,0 +1,89 @@
+{
+  "name": "Learnground",
+  "version": "1.0.0",
+  "description": "Learnground Tesis",
+  "repository": "",
+  "author": {
+    "name": "Gonzalo Rascon",
+    "email": "gonzarascon@gmail.com",
+    "url": "https://www.gonzarascon.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "debug": "NODE_OPTIONS='--inspect' next dev"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "lint-staged": {
+    "*.{js,css,html,json}, !.next/*": "npx prettier --write"
+  },
+  "dependencies": {
+    "@chakra-ui/core": "^0.8.0",
+    "@emotion/core": "^10.1.0",
+    "@emotion/styled": "^10.0.27",
+    "@zeit/next-css": "^1.0.1",
+    "babel-eslint": "^10.1.0",
+    "color-js": "^1.0.5",
+    "dotenv-webpack": "^4.0.0",
+    "emotion-theming": "^10.0.27",
+    "framer-motion": "^2.9.4",
+    "next": "^10.0.0",
+    "next-fonts": "^1.4.0",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-inlinesvg": "^2.1.1",
+    "react-sizes": "^2.0.0",
+    "styled-jsx": "^3.3.1",
+    "styled-jsx-plugin-postcss": "^3.0.2",
+    "swr": "^0.3.6",
+    "zustand": "^3.1.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.5.0",
+    "postcss-custom-media": "^7.0.8",
+    "postcss-flexbugs-fixes": "^4.2.1",
+    "postcss-nested": "^4.2.3",
+    "postcss-preset-env": "^6.7.0",
+    "postcss-pxtorem": "^5.1.1",
+    "prettier": "^2.1.2"
+  },
+  "postcss": {
+    "plugins": {
+      "postcss-preset-env": {
+        "autoprefixer": {
+          "flexbox": "no-2009"
+        },
+        "stage": 3,
+        "features": {
+          "custom-properties": false
+        }
+      },
+      "postcss-flexbugs-fixes": {},
+      "postcss-pxtorem": {
+        "propList": [
+          "*"
+        ]
+      },
+      "postcss-custom-media": {
+        "importFrom": [
+          "./lib/customMedia.json"
+        ]
+      },
+      "postcss-nested": {}
+    }
+  }
+}
