@@ -4,7 +4,7 @@ import { ThemeProvider, ColorModeProvider, CSSReset } from '@chakra-ui/core';
 import { globalStyles } from '@/lib/globalStyle';
 import { useStore } from '@/lib/store';
 import theme from '@/lib/theme';
-import { AppHead, Layout } from '@/components';
+import { AppHead } from '@/components';
 
 function MyApp({ Component, pageProps }) {
   const info = useStore((state) => state.info);
@@ -13,9 +13,7 @@ function MyApp({ Component, pageProps }) {
       <ColorModeProvider>
         <AppHead />
         <CSSReset />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <Component {...pageProps} />
         <style jsx global>
           {globalStyles}
         </style>

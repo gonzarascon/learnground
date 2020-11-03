@@ -9,16 +9,20 @@ import {
   Button,
 } from '@chakra-ui/core';
 
+import { useStore } from '@/lib/store';
+
 const MotionFlex = motion.custom(Flex);
 
 function HomeContainer() {
   const [userType, setUserType] = useState(null);
+  const setStoreUserType = useStore((state) => state.setUserType);
 
   /**
    * handleClickUserType
    * @param {'instructor' | 'alumn' | null} type
    */
   const handleClickUserType = (type) => {
+    setStoreUserType(type);
     setUserType(type);
   };
 
@@ -47,7 +51,7 @@ function HomeContainer() {
               <Text>
                 Gracias por participar de estas pruebas.
                 <br />
-                Antes de comenzar, por favor indica que tipo de usuario eres:
+                Antes de comenzar, por favor eligí tu tipo de usuario:
               </Text>
             </Box>
             <Flex
@@ -60,6 +64,7 @@ function HomeContainer() {
                 variantColor="blue"
                 variant="ghost"
                 onClick={() => handleClickUserType('instructor')}
+                color="blue.400"
               >
                 Soy profesor
               </Button>
@@ -67,6 +72,7 @@ function HomeContainer() {
                 variantColor="blue"
                 variant="ghost"
                 onClick={() => handleClickUserType('alumn')}
+                color="blue.400"
               >
                 Soy alumno
               </Button>
@@ -84,27 +90,40 @@ function HomeContainer() {
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'tween' }}
           >
-            <Box textAlign="center" paddingY="10">
+            <Flex direction="column" align="center" paddingY="10">
               <Button
+                alignSelf="flex-start"
                 leftIcon="arrow-back"
                 variantColor="blue"
                 variant="ghost"
                 onClick={() => handleClickUserType(null)}
+                color="blue.400"
+                mb="10"
               >
                 Atrás
               </Button>
               <Heading>¿Cuál demo quieres utilizar?</Heading>
-            </Box>
+            </Flex>
             <Flex
               wrap="nowrap"
               justify="space-evenly"
               width="100%"
               maxWidth="600px"
             >
-              <Button variantColor="blue" variant="ghost" border="0">
+              <Button
+                variantColor="blue"
+                variant="ghost"
+                border="0"
+                color="blue.400"
+              >
                 Demo sin gamificar
               </Button>
-              <Button variantColor="blue" variant="ghost" border="0">
+              <Button
+                variantColor="blue"
+                color="blue.400"
+                variant="ghost"
+                border="0"
+              >
                 Demo gamificada
               </Button>
             </Flex>
