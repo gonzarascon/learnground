@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
+import { HomeContainer } from '@/containers';
 
 function Home() {
   const setInfo = useStore((state) => state.setInfo);
@@ -8,14 +9,7 @@ function Home() {
   useEffect(() => {
     setInfo('info de la home');
   }, []);
-  return (
-    <section>
-      Index
-      <Link href="/about">
-        <a>about</a>
-      </Link>
-    </section>
-  );
+  return <HomeContainer />;
 }
 
 export default Home;

@@ -14,7 +14,7 @@ const Header = () => {
       borderColor="gray.300"
       backgroundColor="gray.50"
     >
-      <Heading>My header</Heading>
+      <Heading fontFamily="var(--f-Chivo)">Learnground</Heading>
     </Flex>
   );
 };

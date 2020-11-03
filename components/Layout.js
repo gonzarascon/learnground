@@ -8,7 +8,12 @@ const Layout = ({ children }) => {
   return (
     <Flex minH="100vh" direction="column">
       <Header />
-      <Box as="main" width="100%" minHeight="calc(100vh - 94px - 21px)">
+      <Box
+        as="main"
+        width="100%"
+        height="100%"
+        minHeight="calc(100vh - 94px - 21px)"
+      >
         {children}
       </Box>
       <Flex align="center" justify="center">
