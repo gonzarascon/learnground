@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Flex,
@@ -14,6 +15,7 @@ import { useStore } from '@/lib/store';
 const MotionFlex = motion.custom(Flex);
 
 function HomeContainer() {
+  const router = useRouter();
   const [userType, setUserType] = useState(null);
   const setStoreUserType = useStore((state) => state.setUserType);
 
@@ -24,6 +26,15 @@ function HomeContainer() {
   const handleClickUserType = (type) => {
     setStoreUserType(type);
     setUserType(type);
+  };
+
+  /**
+   * handleRedirect
+   * @param {'no-gamificado' | 'gamificado'} version
+   */
+
+  const handleRedirect = (version) => {
+    router.push(`/demo/${version}`);
   };
 
   return (
@@ -115,6 +126,7 @@ function HomeContainer() {
                 variant="ghost"
                 border="0"
                 color="blue.400"
+                onClick={() => handleRedirect('no-gamificado')}
               >
                 Demo sin gamificar
               </Button>
@@ -123,6 +135,7 @@ function HomeContainer() {
                 color="blue.400"
                 variant="ghost"
                 border="0"
+                onClick={() => handleRedirect('gamificado')}
               >
                 Demo gamificada
               </Button>
