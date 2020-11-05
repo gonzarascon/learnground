@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Flex, Heading, Menu, MenuButton } from '@chakra-ui/core';
-import { AvatarMenu } from '@/components';
+import { Avatar, Flex, Grid, Heading, Menu, MenuButton } from '@chakra-ui/core';
+import { AvatarMenu, ProgressIndicator } from '@/components';
 
 const Header = ({ version }) => {
   /**
@@ -13,26 +13,37 @@ const Header = ({ version }) => {
     version === 'start' ? resultIfStart : resultIfDemo;
 
   return (
-    <Flex
+    <Grid
       as="header"
-      align="center"
-      justify={processVersion('center', 'space-between')}
-      wrap="wrap"
-      padding="1.5rem"
+      alignItems="center"
+      justifyItems="center"
+      gap="20px"
+      templateColumns={processVersion('1fr', 'auto 1fr auto')}
+      px="10"
+      py="5"
       borderBottom="1px solid"
       borderColor="gray.300"
       backgroundColor="gray.50"
     >
-      <Heading
-        fontFamily="var(--f-Chivo)"
-        as="h1"
-        size={processVersion('xl', 'sm')}
-      >
+      <Heading as="h1" size={processVersion('xl', 'md')}>
         Learnground
       </Heading>
 
-      {version === 'demo' && <AvatarMenu />}
-    </Flex>
+      {version === 'demo' && (
+        <>
+          {/* TODO: Conditional rendering for this heading */}
+          <Heading as="h2" size="sm" maxWidth="500px" isTruncated>
+            Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4
+          </Heading>
+
+          <Flex wrap="nowrap" justify="flex-end">
+            <ProgressIndicator />
+
+            {version === 'demo' && <AvatarMenu />}
+          </Flex>
+        </>
+      )}
+    </Grid>
   );
 };
 
