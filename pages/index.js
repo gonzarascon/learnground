@@ -6,11 +6,6 @@ import { HomeContainer } from '@/containers';
 import { Layout } from '@/components';
 
 function Home() {
-  const setInfo = useStore((state) => state.setInfo);
-
-  useEffect(() => {
-    setInfo('info de la home');
-  }, []);
   return (
     <Layout>
       <HomeContainer />

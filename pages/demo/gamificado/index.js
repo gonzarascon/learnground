@@ -1,12 +1,12 @@
-import { Layout } from '@/components';
-import { HomeContainer } from '@/containers';
 import React from 'react';
+import { DemoLayout } from '@/components';
+import { HomeContainer } from '@/containers';
 
 function GamificadoIndex() {
   return (
-    <Layout>
+    <DemoLayout>
       <HomeContainer />
-    </Layout>
+    </DemoLayout>
   );
 }
 

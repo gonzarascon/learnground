@@ -17,7 +17,10 @@ const MotionFlex = motion.custom(Flex);
 function HomeContainer() {
   const router = useRouter();
   const [userType, setUserType] = useState(null);
-  const setStoreUserType = useStore((state) => state.setUserType);
+  const { setStoreUserType, setAppType } = useStore((state) => ({
+    setStoreUserType: state.setUserType,
+    setAppType: state.setAppType,
+  }));
 
   /**
    * handleClickUserType
@@ -34,6 +37,7 @@ function HomeContainer() {
    */
 
   const handleRedirect = (version) => {
+    setAppType(version === 'no-gamificado' ? 'normal' : 'gamified');
     router.push(`/demo/${version}`);
   };
 
