@@ -7,3 +7,5 @@ export { default as AvatarMenu } from './AvatarMenu';
 export { default as ProgressIndicator } from './ProgressIndicator';
 
 export { default as AppHead } from './AppHead';
+
+export { default as CourseCard } from './CourseCard';

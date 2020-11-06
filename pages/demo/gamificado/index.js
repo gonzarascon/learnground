@@ -1,11 +1,11 @@
 import React from 'react';
 import { DemoLayout } from '@/components';
-import { HomeContainer } from '@/containers';
+import { DemoIndex } from '@/containers';
 
 function GamificadoIndex() {
   return (
     <DemoLayout>
-      <HomeContainer />
+      <DemoIndex />
     </DemoLayout>
   );
 }

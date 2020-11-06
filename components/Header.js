@@ -24,6 +24,7 @@ const Header = ({ version }) => {
       borderBottom="1px solid"
       borderColor="gray.300"
       backgroundColor="gray.50"
+      width="100%"
     >
       <Heading as="h1" size={processVersion('xl', 'md')}>
         Learnground
