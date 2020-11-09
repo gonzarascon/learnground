@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
-import { Box, Button, Heading, Image } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading, Image, Progress } from '@chakra-ui/core';
 
-function CourseCard({ title = '', slug = '', image = '' }) {
+function CourseCard({
+  title = '',
+  slug = '',
+  image = '',
+  progress = 0,
+  lastClass = 0,
+}) {
+  const [coursePath, setCoursePath] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    const path = `${router.pathname}/curso/${slug}/${lastClass}`;
+    setCoursePath(path);
+    router.prefetch(path);
+  }, []);
+
+  const handleButtonClick = () => {
+    router.push(coursePath);
+  };
+
   return (
     <Box
       rounded="lg"
@@ -21,9 +41,29 @@ function CourseCard({ title = '', slug = '', image = '' }) {
         <Heading as="h4" fontSize="md" isTruncated title={title}>
           {title}
         </Heading>
-        <Button variantColor="blue" variant="solid" color="white" mt="3">
-          Comenzar
-        </Button>
+        <Flex wrap="nowrap" align="center" justify="space-between">
+          <Button
+            variantColor="blue"
+            variant="solid"
+            color="white"
+            mt="3"
+            onClick={handleButtonClick}
+          >
+            Comenzar
+          </Button>
+
+          <Box w="50%">
+            <Heading as="h5" fontWeight="300" fontSize="sm">
+              Progreso
+            </Heading>
+            <Progress
+              color="green"
+              value={progress * 100}
+              rounded="lg"
+              mt="2"
+            />
+          </Box>
+        </Flex>
       </Box>
     </Box>
   );
@@ -31,6 +71,8 @@ function CourseCard({ title = '', slug = '', image = '' }) {
 
 CourseCard.propTypes = {
   image: PropTypes.string,
+  lastClass: PropTypes.number,
+  progress: PropTypes.number,
   slug: PropTypes.string,
   title: PropTypes.string,
 };

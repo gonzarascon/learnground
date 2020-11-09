@@ -21,7 +21,11 @@ function DemoIndex() {
         autoRows="300px"
         mt="10"
       >
-        <CourseCard title="Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4" />
+        <CourseCard
+          title="Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4"
+          progress={0.5}
+          slug="master-en-css"
+        />
       </Grid>
     </Flex>
   );
