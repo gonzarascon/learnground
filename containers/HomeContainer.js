@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -21,6 +21,11 @@ function HomeContainer() {
     setStoreUserType: state.setUserType,
     setAppType: state.setAppType,
   }));
+
+  useEffect(() => {
+    //TODO: add prefetchs for all pages
+    router.prefetch(`/demo/gamificado`);
+  }, []);
 
   /**
    * handleClickUserType

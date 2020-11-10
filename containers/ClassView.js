@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Flex, Grid, Heading } from '@chakra-ui/core';
 
 import { useStore } from '@/lib/store';
-import { CourseCard, Markdown } from '@/components';
+import { ChatRoom, CourseCard, Markdown } from '@/components';
 
 function ClassView({ source = '' }) {
   const router = useRouter();
@@ -19,6 +19,7 @@ function ClassView({ source = '' }) {
       height="calc(100vh - 21px - 89px)"
     >
       <Markdown source={source} />
+      <ChatRoom />
     </Grid>
   );
 }
