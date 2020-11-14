@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Flex, Grid, Heading } from '@chakra-ui/core';
+import { Flex, Grid, Heading } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
 import { CourseCard } from '@/components';
@@ -18,7 +18,6 @@ function DemoIndex() {
         width="100%"
         as="section"
         gridTemplateColumns="repeat(auto-fill, 300px)"
-        autoRows="300px"
         mt="10"
       >
         <CourseCard

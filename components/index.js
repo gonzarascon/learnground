@@ -12,3 +12,4 @@ export { default as CourseCard } from './CourseCard';
 
 export { default as Markdown } from './Markdown';
 export { default as ChatRoom } from './ChatRoom';
+export { default as ChatMessage } from './ChatMessage';

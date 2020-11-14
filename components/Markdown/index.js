@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import gemoji from 'remark-gemoji';
 import highlight from 'remark-highlight.js';
-import { Box } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/react';
 
 import { Heading } from './renderers';
 

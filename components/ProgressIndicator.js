@@ -4,7 +4,7 @@ import {
   CircularProgressLabel,
   Flex,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 
 const ProgressIndicator = () => {
   return (
@@ -12,7 +12,7 @@ const ProgressIndicator = () => {
       <Text fontFamily="var(--f-Chivo)" mr="5">
         Progreso
       </Text>
-      <CircularProgress color="green" value={50}>
+      <CircularProgress color="green.400" value={50} min={0} max={100}>
         <CircularProgressLabel fontFamily="var(--f-Chivo)" userSelect="none">
           50%
         </CircularProgressLabel>

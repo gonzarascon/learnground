@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
-import { Box, Button, Flex, Heading, Image, Progress } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading, Image, Progress } from '@chakra-ui/react';
 
 function CourseCard({
   title = '',
@@ -25,17 +25,12 @@ function CourseCard({
   };
 
   return (
-    <Box
-      rounded="lg"
-      borderWidth="1px"
-      shadow="md"
-      overflow="hidden"
-      maxW="sm`"
-    >
+    <Box rounded="lg" borderWidth="1px" shadow="md" overflow="hidden" maxW="sm">
       <Image
         src={image.length > 0 ? image : '/images/course_placeholder.png'}
         alt={title}
         objectFit="contain"
+        maxH="186.5px"
       />
       <Box p="5">
         <Heading as="h4" fontSize="md" isTruncated title={title}>
@@ -43,7 +38,7 @@ function CourseCard({
         </Heading>
         <Flex wrap="nowrap" align="center" justify="space-between">
           <Button
-            variantColor="blue"
+            colorScheme="blue"
             variant="solid"
             color="white"
             mt="3"

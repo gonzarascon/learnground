@@ -1,6 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Flex, Grid, Heading, Menu, MenuButton } from '@chakra-ui/core';
+import {
+  Avatar,
+  Flex,
+  Grid,
+  Heading,
+  Menu,
+  MenuButton,
+} from '@chakra-ui/react';
 import { AvatarMenu, ProgressIndicator } from '@/components';
 
 const Header = ({ version }) => {

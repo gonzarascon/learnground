@@ -2,12 +2,13 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import {
   Avatar,
+  Flex,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
 
@@ -44,17 +45,13 @@ const AvatarMenu = () => {
 
   return (
     <Menu closeOnSelect>
-      <MenuButton
-        display="flex"
-        alignItems="center"
-        _hover={{ bg: 'gray.200' }}
-        p="2"
-        rounded="25px"
-      >
-        <Avatar size="sm" name="Usuario Prueba" />
-        <Text ml="2" fontFamily="var(--f-Chivo)">
-          Usuario Prueba
-        </Text>
+      <MenuButton _hover={{ bg: 'gray.200' }} p="2" rounded="25px">
+        <Flex display="flex" flexDir="row" alignItems="center">
+          <Avatar size="sm" name="Usuario Prueba" />
+          <Text ml="2" fontFamily="var(--f-Chivo)">
+            Usuario Prueba
+          </Text>
+        </Flex>
       </MenuButton>
 
       <MenuList bg="gray.200" py="5" rounded="25px">

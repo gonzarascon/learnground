@@ -8,7 +8,8 @@ import {
   Box,
   Text,
   Button,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 
 import { useStore } from '@/lib/store';
 
@@ -81,7 +82,7 @@ function HomeContainer() {
               maxWidth="600px"
             >
               <Button
-                variantColor="blue"
+                colorScheme="blue"
                 variant="ghost"
                 onClick={() => handleClickUserType('instructor')}
                 color="blue.400"
@@ -89,7 +90,7 @@ function HomeContainer() {
                 Soy profesor
               </Button>
               <Button
-                variantColor="blue"
+                colorScheme="blue"
                 variant="ghost"
                 onClick={() => handleClickUserType('alumn')}
                 color="blue.400"
@@ -113,8 +114,8 @@ function HomeContainer() {
             <Flex direction="column" align="center" paddingY="10">
               <Button
                 alignSelf="flex-start"
-                leftIcon="arrow-back"
-                variantColor="blue"
+                leftIcon={<ArrowBackIcon />}
+                colorScheme="blue"
                 variant="ghost"
                 onClick={() => handleClickUserType(null)}
                 color="blue.400"
@@ -131,7 +132,7 @@ function HomeContainer() {
               maxWidth="600px"
             >
               <Button
-                variantColor="blue"
+                colorScheme="blue"
                 variant="ghost"
                 border="0"
                 color="blue.400"
@@ -140,7 +141,7 @@ function HomeContainer() {
                 Demo sin gamificar
               </Button>
               <Button
-                variantColor="blue"
+                colorScheme="blue"
                 color="blue.400"
                 variant="ghost"
                 border="0"

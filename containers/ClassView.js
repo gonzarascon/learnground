@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Flex, Grid, Heading } from '@chakra-ui/core';
+import { Flex, Grid, Heading } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
 import { ChatRoom, CourseCard, Markdown } from '@/components';
