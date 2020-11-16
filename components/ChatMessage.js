@@ -1,10 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Box, Flex, Text, Heading } from '@chakra-ui/react';
 
-const ChatMessage = ({ owned = false, hasBadge = false }) => {
+const MotionBox = motion.custom(Box);
+
+const ChatMessage = ({ owned = false, hasBadge = false, id = '' }) => {
   return (
-    <Box
+    <MotionBox
+      layoutId={id}
+      initial={{ opacity: 0, y: 50, scale: 0.3 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       maxW="95%"
       alignSelf={owned ? 'flex-end' : 'flex-start'}
       mb="5"
@@ -28,12 +34,16 @@ const ChatMessage = ({ owned = false, hasBadge = false }) => {
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo
         quisquam, id mollitia quos laborum et?
       </Text>
-    </Box>
+      <Text fontSize="xs" fontStyle="oblique" textAlign="right" mt={1}>
+        20/11/20 13:30
+      </Text>
+    </MotionBox>
   );
 };
 
 ChatMessage.propTypes = {
   hasBadge: PropTypes.bool,
+  id: PropTypes.string,
   owned: PropTypes.bool,
 };
 

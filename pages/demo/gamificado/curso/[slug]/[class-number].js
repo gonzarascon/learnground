@@ -6,7 +6,7 @@ import { ClassView } from '@/containers';
 
 function GamificadoCourse({ demoMD }) {
   return (
-    <DemoLayout>
+    <DemoLayout isCourse>
       <ClassView source={demoMD} />
     </DemoLayout>
   );

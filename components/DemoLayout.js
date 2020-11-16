@@ -4,10 +4,10 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { Header } from '@/components';
 
-const DemoLayout = ({ children }) => {
+const DemoLayout = ({ children, isCourse = false }) => {
   return (
     <Flex minH="100vh" direction="column" align="center">
-      <Header version="demo" />
+      <Header version="demo" isCourse={isCourse} />
       <Box
         as="main"
         width="100%"
@@ -31,6 +31,7 @@ DemoLayout.propTypes = {
     PropTypes.element,
     PropTypes.arrayOf(PropTypes.element),
   ]).isRequired,
+  isCourse: PropTypes.bool,
 };
 
 export default DemoLayout;

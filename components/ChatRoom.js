@@ -7,11 +7,16 @@ import {
   Input,
   InputRightAddon,
   Button,
+  Text,
 } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
+import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
+
+import { useCourseStore } from '@/lib/store';
 import { ChatMessage } from '@/components';
 
 const ChatRoom = () => {
+  const chatMessages = useCourseStore((state) => state.chatMessages);
   return (
     <Flex
       bg="gray.100"
@@ -31,8 +36,19 @@ const ChatRoom = () => {
         overflowX="hidden"
         height="100%"
       >
-        <ChatMessage hasBadge={true} />
-        <ChatMessage owned={true} />
+        {!chatMessages && (
+          <Text fontSize="sm" color="gray.500">
+            Aún no hay mensajes en el chat de esta clase. ¡Se el primero!
+          </Text>
+        )}
+        <AnimatePresence>
+          {chatMessages && (
+            <AnimateSharedLayout>
+              <ChatMessage hasBadge={true} id="message_1" />
+              <ChatMessage owned={true} id="message_2" />
+            </AnimateSharedLayout>
+          )}
+        </AnimatePresence>
       </Flex>
       <InputGroup rounded="0">
         <Input

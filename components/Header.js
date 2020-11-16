@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { AvatarMenu, ProgressIndicator } from '@/components';
 
-const Header = ({ version }) => {
+const Header = ({ version, isCourse }) => {
   /**
    * processVersion
    * @param {String} resultIfStart String to return if version is equal to "start"
@@ -40,12 +40,18 @@ const Header = ({ version }) => {
       {version === 'demo' && (
         <>
           {/* TODO: Conditional rendering for this heading */}
-          <Heading as="h2" size="sm" maxWidth="500px" isTruncated>
-            Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4
-          </Heading>
+          {isCourse && (
+            <Heading as="h2" size="sm" maxWidth="500px" isTruncated>
+              Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4
+            </Heading>
+          )}
 
-          <Flex wrap="nowrap" justify="flex-end">
-            <ProgressIndicator />
+          <Flex
+            wrap="nowrap"
+            justify="flex-end"
+            gridColumn={isCourse ? 'auto' : '3/4'}
+          >
+            {isCourse && <ProgressIndicator />}
 
             {version === 'demo' && <AvatarMenu />}
           </Flex>
@@ -57,10 +63,12 @@ const Header = ({ version }) => {
 
 Header.propTypes = {
   version: PropTypes.oneOf(['demo', 'start']),
+  isCourse: PropTypes.bool,
 };
 
 Header.defaultProps = {
   version: 'start',
+  isCourse: false,
 };
 
 export default Header;
