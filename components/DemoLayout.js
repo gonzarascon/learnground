@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Flex, Text } from '@chakra-ui/react';
 
-import { Header } from '@/components';
+import { Header, ClassList } from '@/components';
 
 const DemoLayout = ({ children, isCourse = false }) => {
   return (
-    <Flex minH="100vh" direction="column" align="center">
+    <Flex minH="100vh" direction="column" align="center" position="relative">
       <Header version="demo" isCourse={isCourse} />
+      {isCourse && <ClassList />}
       <Box
         as="main"
         width="100%"

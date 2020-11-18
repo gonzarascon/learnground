@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import {
   Avatar,
   Flex,
@@ -8,6 +9,7 @@ import {
   MenuItem,
   MenuList,
   Text,
+  Link as ChakraLink,
 } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
@@ -15,7 +17,7 @@ import { useStore } from '@/lib/store';
 const MenuItems = [
   {
     label: 'Mi perfil',
-    href: 'profile',
+    href: 'perfil/username',
   },
   {
     label: 'Ver tienda',
@@ -56,7 +58,11 @@ const AvatarMenu = () => {
 
       <MenuList bg="gray.200" py="5" rounded="25px">
         {MenuItems.map((item) => (
-          <MenuItem _hover={{ backgroundColor: 'gray.300' }} key={item.href}>
+          <MenuItem
+            _hover={{ backgroundColor: 'gray.300' }}
+            key={item.href}
+            onClick={() => handleRedirect(item.href)}
+          >
             {item.label}
           </MenuItem>
         ))}
