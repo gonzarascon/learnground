@@ -1,11 +1,11 @@
 import React from 'react';
 import { DemoLayout } from '@/components';
-import { Heading } from '@chakra-ui/react';
+import { ProfileView } from '@/containers';
 
 function GamificadoCourse() {
   return (
     <DemoLayout>
-      <Heading>Mi perfil</Heading>
+      <ProfileView />
     </DemoLayout>
   );
 }

@@ -2,3 +2,4 @@
 export { default as HomeContainer } from './HomeContainer';
 export { default as DemoIndex } from './DemoIndex';
 export { default as ClassView } from './ClassView';
+export { default as ProfileView } from './ProfileView';
