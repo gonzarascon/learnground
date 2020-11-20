@@ -8,7 +8,7 @@ function CourseCard({
   title = '',
   slug = '',
   image = '',
-  progress = 0,
+  progress,
   lastClass = 0,
 }) {
   const [coursePath, setCoursePath] = useState('');
@@ -30,7 +30,6 @@ function CourseCard({
         src={image.length > 0 ? image : '/images/course_placeholder.png'}
         alt={title}
         objectFit="contain"
-        maxH="186.5px"
       />
       <Box p="5">
         <Heading as="h4" fontSize="md" isTruncated title={title}>
@@ -47,17 +46,19 @@ function CourseCard({
             Comenzar
           </Button>
 
-          <Box w="50%">
-            <Heading as="h5" fontWeight="300" fontSize="sm">
-              Progreso
-            </Heading>
-            <Progress
-              color="green"
-              value={progress * 100}
-              rounded="lg"
-              mt="2"
-            />
-          </Box>
+          {progress && (
+            <Box w="50%">
+              <Heading as="h5" fontWeight="300" fontSize="sm">
+                Progreso
+              </Heading>
+              <Progress
+                color="green"
+                value={progress * 100}
+                rounded="lg"
+                mt="2"
+              />
+            </Box>
+          )}
         </Flex>
       </Box>
     </Box>

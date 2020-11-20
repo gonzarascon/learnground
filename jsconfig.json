@@ -19,6 +19,7 @@
     "baseUrl": ".",
     "paths": {
       "@/components": ["components"],
+      "@/components/*": ["components/*"],
       "@/containers": ["containers"],
       "@/lib/*": ["lib/*"]
     }
