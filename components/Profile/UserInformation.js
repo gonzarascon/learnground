@@ -8,8 +8,14 @@ import {
   Progress,
   Text,
 } from '@chakra-ui/react';
+import { useStore } from '@/lib/store';
 
 const UserInformation = () => {
+  const setShopOpen = useStore((state) => state.setShopOpen);
+
+  const handleStoreOpen = () => {
+    setShopOpen(true);
+  };
   return (
     <Box gridArea="info" maxW="441px">
       <Flex wrap="nowrap" align="center">
@@ -44,7 +50,9 @@ const UserInformation = () => {
           <Box bg="green.200" h="30px" w="30px" rounded="100%" mr="5"></Box>
           <Text fontSize="xl">200</Text>
         </Flex>
-        <Button colorScheme="purple">Visitar tienda</Button>
+        <Button colorScheme="purple" onClick={handleStoreOpen}>
+          Visitar tienda
+        </Button>
       </Flex>
     </Box>
   );

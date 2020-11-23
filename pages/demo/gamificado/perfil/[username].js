@@ -2,7 +2,7 @@ import React from 'react';
 import { DemoLayout } from '@/components';
 import { ProfileView } from '@/containers';
 
-function GamificadoCourse() {
+function GamificadoProfile() {
   return (
     <DemoLayout>
       <ProfileView />
@@ -10,4 +10,4 @@ function GamificadoCourse() {
   );
 }
 
-export default GamificadoCourse;
+export default GamificadoProfile;

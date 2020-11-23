@@ -1,16 +1,56 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Flex, Grid, Heading } from '@chakra-ui/react';
+import { Button, Flex, Grid, Heading, Text } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
 import { CourseCard } from '@/components';
 
 function DemoIndex() {
   const router = useRouter();
-  const appType = useStore((state) => state.appType);
+  const [appType, userType] = useStore((state) => [
+    state.appType,
+    state.userType,
+  ]);
+
+  const handleCreateCourseRedirect = () => {
+    const URL = `/demo/${
+      appType === 'gamified' ? 'gamificado' : 'no-gamificado'
+    }/curso/crear`;
+
+    router.push(URL);
+  };
 
   return (
     <Flex direction="column" w="100%" py="10">
+      {userType === 'instructor' && (
+        <Flex
+          justify="space-between"
+          bg="gray.100"
+          shadow="md"
+          p="5"
+          mb="5"
+          rounded="lg"
+          align="flex-end"
+        >
+          <Heading as="h3" fontSize="2xl">
+            <Text
+              fontSize="lg"
+              fontStyle="oblique"
+              color="gray.500"
+              fontWeight="lighter"
+            >
+              Eres profesor
+            </Text>
+            Comienza creando tu propio curso
+          </Heading>
+          <Button
+            colorScheme="blue"
+            onClick={() => handleCreateCourseRedirect()}
+          >
+            Crear curso nuevo
+          </Button>
+        </Flex>
+      )}
       <Heading fontSize="5xl" as="h2">
         Cursos disponibles
       </Heading>

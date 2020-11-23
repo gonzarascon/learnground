@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+
 import {
   Avatar,
   Flex,
@@ -9,7 +9,6 @@ import {
   MenuItem,
   MenuList,
   Text,
-  Link as ChakraLink,
 } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
@@ -20,8 +19,8 @@ const MenuItems = [
     href: 'perfil/username',
   },
   {
-    label: 'Ver tienda',
-    href: 'store',
+    label: 'Configuración',
+    href: 'perfil/configuracion',
   },
   {
     label: 'Cerrar sesión',
