@@ -21,7 +21,7 @@
     "node": true // Enables Node.js global variables and Node.js scoping.
   },
   "globals": {
-    "google": "false"
+    "google": "off"
   },
   "extends": [
     "eslint:recommended",
