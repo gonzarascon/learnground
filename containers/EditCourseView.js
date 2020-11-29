@@ -1,16 +1,6 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from '@chakra-ui/react';
-import { DeleteIcon, EditIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { ContentView, DescriptionView } from '@/components/EditCourse';
 
 const EditCourseView = () => {
   return (
@@ -22,64 +12,10 @@ const EditCourseView = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Flex
-              pt="5"
-              minH="60vh"
-              direction="column"
-              align="center"
-              justify="space-between"
-            >
-              <Box w="100%">
-                <Flex
-                  my="2"
-                  wrap="nowrap"
-                  justify="space-between"
-                  align="center"
-                  p="5"
-                  border="1px solid"
-                  borderColor="gray.200"
-                >
-                  <Text>Titulo de clase</Text>
-
-                  <Flex wrap="nowrap">
-                    <Button
-                      colorScheme="yellow"
-                      mr="2"
-                      rightIcon={<EditIcon />}
-                      variant="ghost"
-                    >
-                      Editar
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      rightIcon={<DeleteIcon />}
-                      variant="ghost"
-                    >
-                      Eliminar
-                    </Button>
-                  </Flex>
-                </Flex>
-                <Button
-                  m="30px auto"
-                  d="block"
-                  colorScheme="blue"
-                  variant="outline"
-                >
-                  Agregar contenido
-                </Button>
-              </Box>
-              <Button
-                alignSelf="flex-end"
-                d="block"
-                colorScheme="blue"
-                rightIcon={<ChevronRightIcon />}
-              >
-                Continuar
-              </Button>
-            </Flex>
+            <ContentView />
           </TabPanel>
           <TabPanel>
-            <p>2</p>
+            <DescriptionView />
           </TabPanel>
         </TabPanels>
       </Tabs>
