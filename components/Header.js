@@ -1,16 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Avatar,
-  Flex,
-  Grid,
-  Heading,
-  Menu,
-  MenuButton,
-} from '@chakra-ui/react';
+import Link from 'next/link';
+import { Flex, Grid, Heading, Link as ChakraLink } from '@chakra-ui/react';
 import { AvatarMenu, ProgressIndicator } from '@/components';
+import { useStore } from '@/lib/store';
 
 const Header = ({ version, isCourse }) => {
+  const loggedIn = useStore((state) => state.loggedIn);
+
   /**
    * processVersion
    * @param {String} resultIfStart String to return if version is equal to "start"
@@ -53,7 +50,12 @@ const Header = ({ version, isCourse }) => {
           >
             {isCourse && <ProgressIndicator />}
 
-            {version === 'demo' && <AvatarMenu />}
+            {version === 'demo' && loggedIn && <AvatarMenu />}
+            {version === 'demo' && !loggedIn && (
+              <Link href="/auth/iniciar-sesion">
+                <ChakraLink>Iniciar Sesión</ChakraLink>
+              </Link>
+            )}
           </Flex>
         </>
       )}

@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { useStore } from '@/lib/store';
+import { useStore, useUserStore } from '@/lib/store';
 
 const MenuItems = [
   {
@@ -31,6 +31,7 @@ const MenuItems = [
 const AvatarMenu = () => {
   const router = useRouter();
   const appType = useStore((state) => state.appType);
+  const user = useUserStore((state) => state.user);
 
   const handleRedirect = (href) => {
     if (href === 'logout') {
@@ -48,9 +49,9 @@ const AvatarMenu = () => {
     <Menu closeOnSelect>
       <MenuButton _hover={{ bg: 'gray.200' }} p="2" rounded="25px">
         <Flex display="flex" flexDir="row" alignItems="center">
-          <Avatar size="sm" name="Usuario Prueba" />
+          <Avatar size="sm" name={user.username} />
           <Text ml="2" fontFamily="var(--f-Chivo)">
-            Usuario Prueba
+            {user.username}
           </Text>
         </Flex>
       </MenuButton>
