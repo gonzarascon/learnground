@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import {
@@ -40,6 +40,14 @@ const AvatarMenu = () => {
     state.user,
     state.clearUser,
   ]);
+
+  useEffect(() => {
+    if (appType && user) {
+      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+      router.prefetch(`/demo/${pathType}/perfil/${user.username}`);
+      router.prefetch(`/demo/${pathType}/perfil/configuracion`);
+    }
+  }, [appType, user]);
 
   const handleRedirect = async (href) => {
     const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
