@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
+import _ from 'lodash';
 import {
   Avatar,
   Box,
@@ -10,9 +12,42 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Select from 'react-select';
+import { useUserStore } from '@/lib/store';
+import { fetcher, parseCammelCase } from '@/lib/helpers';
 
 function SettingsView() {
-  const [settingsData, setSettingsData] = useState({});
+  const [user] = useUserStore((state) => [state.user]);
+  const { data: titlesData, error: titlesError } = useSWR(
+    user.titles && `/api/titles/get?titles=${JSON.stringify(user.titles)}`,
+    fetcher
+  );
+  const { data: pinsData, error: pinsError } = useSWR(
+    user.pins && `/api/pins/get?pins=${JSON.stringify(user.pins)}`,
+    fetcher
+  );
+  const [settingsData, setSettingsData] = useState({
+    username: null,
+    titles: null,
+    pins: null,
+  });
+
+  useEffect(() => {
+    if (!_.isEmpty(user)) {
+      setSettingsData({ ...settingsData, username: user.username });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (titlesData && Array.isArray(titlesData.titles)) {
+      setSettingsData({ ...setSettingsData, titles: titlesData.titles });
+    }
+  }, [titlesData]);
+
+  useEffect(() => {
+    if (pinsData && Array.isArray(pinsData.pins)) {
+      setSettingsData({ ...setSettingsData, pins: pinsData.pins });
+    }
+  }, [pinsData]);
 
   return (
     <Box position="relative" maxW="720px" m="0 auto" as="section">
@@ -33,8 +68,19 @@ function SettingsView() {
             Información básica
           </Heading>
           <Flex justify="space-between" align="center">
-            <Avatar name="Usuario Prueba" size="lg" />
-            <Input placeholder="Nombre de usuario" ml="5" />
+            <Avatar
+              name={
+                settingsData.username
+                  ? parseCammelCase(settingsData.username)
+                  : ''
+              }
+              size="lg"
+            />
+            <Input
+              placeholder="Nombre de usuario"
+              ml="5"
+              value={settingsData.username}
+            />
           </Flex>
         </Box>
         <Divider orientation="horizontal" />
@@ -43,12 +89,32 @@ function SettingsView() {
             Títulos e insignias
           </Heading>
           <Flex align="center" wrap="nowrap">
-            <Text mr="5">Titulo del perfil</Text>
-            <Select />
+            <Text mr="5" flex="0 1 auto">
+              Titulo del perfil
+            </Text>
+            <Box w="100%" flex="1">
+              <Select
+                placeholder="Selecciona un título..."
+                options={settingsData.titles ? settingsData.titles : []}
+                noOptionsMessage={() =>
+                  '¡Aún no has desbloqueado títulos! Continua aprendiendo para ganar 😊'
+                }
+              />
+            </Box>
           </Flex>
-          <Flex align="center" wrap="nowrap">
-            <Text mr="5">Insignia de identificación</Text>
-            <Select />
+          <Flex align="center" wrap="nowrap" mt={5}>
+            <Text mr="5" flex="0 1 auto">
+              Insignia de identificación
+            </Text>
+            <Box w="100%" flex="1">
+              <Select
+                placeholder="Selecciona una insignia..."
+                options={settingsData.pins ? settingsData.pins : []}
+                noOptionsMessage={() =>
+                  '¡Aún no has desbloqueado insignias! Continua aprendiendo para ganar 😊'
+                }
+              />
+            </Box>
           </Flex>
         </Box>
       </Box>

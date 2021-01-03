@@ -1,16 +1,15 @@
 import React from 'react';
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Heading,
-  Progress,
-  Text,
-} from '@chakra-ui/react';
+import _ from 'lodash';
+import useSWR from 'swr';
+import { Box, Grid, Heading, Tooltip } from '@chakra-ui/react';
+import { fetcher } from '@/lib/helpers';
+import { useProfileStore } from '@/lib/store';
 
 const UserMedals = () => {
+  // eslint-disable-next-line no-unused-vars
+  const { data, error } = useSWR('/api/badges/get', fetcher);
+  const profileData = useProfileStore((state) => state.profileData);
+
   return (
     <Box gridArea="medals" h="380px">
       <Heading as="h3" mb="5">
@@ -28,15 +27,38 @@ const UserMedals = () => {
         overflowY="auto"
         maxH="308px"
       >
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
-        <Box h="75px" w="75px" rounded="100%" bg="gray.300"></Box>
+        {data &&
+          profileData &&
+          data.badges.map((badge) => {
+            const Attachments = badge.fields.Attachments;
+            const image = Attachments
+              ? Attachments[0].thumbnails.small.url
+              : null;
+            return (
+              <Tooltip
+                label={badge.fields.description}
+                key={badge.id}
+                hasArrow
+                textAlign="center"
+                p={2}
+              >
+                <Box
+                  h="75px"
+                  w="75px"
+                  rounded="100%"
+                  bg="gray.300"
+                  bgImg={
+                    _.find(profileData.badges, badge.fields.id)
+                      ? `url(${image})`
+                      : 'none'
+                  }
+                  bgSize="cover"
+                  bgRepeat="no-repeat"
+                  bgPosition="center"
+                ></Box>
+              </Tooltip>
+            );
+          })}
       </Grid>
     </Box>
   );

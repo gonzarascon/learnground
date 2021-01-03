@@ -12,11 +12,13 @@ import {
 } from '@chakra-ui/react';
 
 import { useStore, useUserStore } from '@/lib/store';
+import { parseCammelCase } from '@/lib/helpers';
+import { logout } from '@/lib/firebase/dataFunctions';
 
-const MenuItems = [
+const MenuItems = (username) => [
   {
     label: 'Mi perfil',
-    href: 'perfil/username',
+    href: `perfil/${username}`,
   },
   {
     label: 'Configuración',
@@ -30,17 +32,28 @@ const MenuItems = [
 
 const AvatarMenu = () => {
   const router = useRouter();
-  const appType = useStore((state) => state.appType);
-  const user = useUserStore((state) => state.user);
+  const [appType, setLoggedIn] = useStore((state) => [
+    state.appType,
+    state.setLoggedIn,
+  ]);
+  const [user, clearUser] = useUserStore((state) => [
+    state.user,
+    state.clearUser,
+  ]);
 
-  const handleRedirect = (href) => {
+  const handleRedirect = async (href) => {
+    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
     if (href === 'logout') {
       //TODO: handle logout
 
+      await logout().then(() => {
+        setLoggedIn(false);
+        clearUser();
+        router.push(`/demo/${pathType}`);
+      });
+
       return;
     }
-
-    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
 
     router.push(`/demo/${pathType}/${href}`);
   };
@@ -49,7 +62,7 @@ const AvatarMenu = () => {
     <Menu closeOnSelect>
       <MenuButton _hover={{ bg: 'gray.200' }} p="2" rounded="25px">
         <Flex display="flex" flexDir="row" alignItems="center">
-          <Avatar size="sm" name={user.username} />
+          <Avatar size="sm" name={parseCammelCase(user.username)} />
           <Text ml="2" fontFamily="var(--f-Chivo)">
             {user.username}
           </Text>
@@ -57,7 +70,7 @@ const AvatarMenu = () => {
       </MenuButton>
 
       <MenuList bg="gray.200" py="5" rounded="25px">
-        {MenuItems.map((item) => (
+        {MenuItems(user.username).map((item) => (
           <MenuItem
             _hover={{ backgroundColor: 'gray.300' }}
             key={item.href}

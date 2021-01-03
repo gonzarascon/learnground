@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -14,13 +14,40 @@ import {
 
 import { Header, ClassList } from '@/components';
 
-import { useStore } from '@/lib/store';
+import { useStore, useUserStore } from '@/lib/store';
+import { auth } from '@/lib/firebase/client';
+import { getById } from '@/lib/firebase/dataFunctions';
 
 const DemoLayout = ({ children, isCourse = false }) => {
-  const [shopOpen, setShopOpen] = useStore((state) => [
+  const [setUser, clearUser] = useUserStore((state) => [
+    state.setUser,
+    state.clearUser,
+  ]);
+  const [shopOpen, setShopOpen, setLoggedIn] = useStore((state) => [
     state.shopOpen,
     state.setShopOpen,
+    state.setLoggedIn,
   ]);
+
+  const handleAuthStateChanged = (user) => {
+    if (user) {
+      getById('users', user.uid).then((response) => {
+        if (response.data()) {
+          setUser({ uid: user.uid, user: response.data() });
+          setLoggedIn(true);
+        }
+      });
+    } else {
+      setLoggedIn(false);
+      clearUser();
+    }
+  };
+
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged(handleAuthStateChanged);
+
+    return () => unsub();
+  }, []);
 
   return (
     <Flex minH="100vh" direction="column" align="center" position="relative">
