@@ -49,7 +49,7 @@ StepLabel.propTypes = {
 
 const MotionBox = motion.custom(Flex);
 
-const CreateCourseView = () => {
+const CreateCourseView = ({ categories }) => {
   const [step, setStep] = useState(1);
   const [courseInfo, setCourseInfo] = useState({
     title: '',
@@ -139,13 +139,19 @@ const CreateCourseView = () => {
             <Heading>Elige una categoría para tu nuevo curso</Heading>
             <Box w="100%" maxW="600px" mt="10">
               <Select
-                options={options}
+                options={categories ? categories : []}
                 placeholder="Busca una categoría"
                 isClearable
+                getOptionLabel={(option) => option.fields.name}
+                isSearchable
+                getOptionValue={(option) => option.fields.id}
                 value={courseInfo.category}
-                onChange={(v) =>
-                  v ? handleInfo({ key: 'category', value: v }) : null
-                }
+                onChange={(v, action) => {
+                  if (action.action === 'clear') {
+                    handleInfo({ key: 'category', value: '' });
+                  }
+                  v ? handleInfo({ key: 'category', value: v }) : null;
+                }}
               />
             </Box>
             <Flex
@@ -174,6 +180,18 @@ const CreateCourseView = () => {
       </AnimatePresence>
     </Flex>
   );
+};
+
+CreateCourseView.propTypes = {
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      fields: PropTypes.shape({
+        name: PropTypes.string,
+        id: PropTypes.number,
+      }),
+    })
+  ),
 };
 
 export default CreateCourseView;
