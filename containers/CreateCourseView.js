@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -12,12 +13,12 @@ import {
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
-
-// temp
-const options = [
-  { value: 'cat_1', label: 'categoria 1' },
-  { value: 'cat_2', label: 'categoria 2' },
-];
+import {
+  createCourse,
+  getById,
+  updateCollection,
+} from '@/lib/firebase/dataFunctions';
+import { useStore, useUserStore } from '@/lib/store';
 
 const StepLabel = ({ number, label, active }) => {
   return (
@@ -50,6 +51,12 @@ StepLabel.propTypes = {
 const MotionBox = motion.custom(Flex);
 
 const CreateCourseView = ({ categories }) => {
+  const router = useRouter();
+  const appType = useStore((state) => state.appType);
+  const [uid, createdCourses] = useUserStore((state) => [
+    state.uid,
+    state.user.createdCourses,
+  ]);
   const [step, setStep] = useState(1);
   const [courseInfo, setCourseInfo] = useState({
     title: '',
@@ -76,8 +83,24 @@ const CreateCourseView = ({ categories }) => {
     setCourseInfo((state) => ({ ...state, [key]: value }));
   };
 
-  const handleSubmit = () => {
-    console.log(courseInfo);
+  const handleSubmit = async () => {
+    const courseId = await createCourse({
+      title: courseInfo.title,
+      category: courseInfo.category,
+      uid,
+    });
+
+    await updateCollection('users', uid, {
+      createdCourses: [...createdCourses, courseId],
+    });
+
+    await getById('courses', courseId).then((response) => {
+      if (response.data()) {
+        const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+        const slug = response.data().slug;
+        router.push(`/demo/${pathType}/curso/${slug}/editar`);
+      }
+    });
   };
 
   return (

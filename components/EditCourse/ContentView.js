@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   Flex,
   Box,
@@ -17,9 +18,58 @@ import {
   ModalFooter,
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import {
+  addContentToCourse,
+  getSubCollection,
+} from '@/lib/firebase/dataFunctions';
+import { useCourseEditStore, useStore } from '@/lib/store';
 
 const ContentView = () => {
+  const router = useRouter();
+  const [contentData, setContentData] = useState([]);
+  const [contentName, setContentName] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const courseData = useCourseEditStore((state) => state.courseData);
+  const appType = useStore((state) => state.appType);
+
+  const fetchData = useCallback(async () => {
+    const { uid } = courseData;
+    await getSubCollection(`courses/${uid}/content`).then((docRef) => {
+      const docsArr = [];
+      if (!docRef.empty) {
+        for (let i in docRef.docs) {
+          const doc = docRef.docs[i];
+          if (doc.exists) {
+            docsArr.push(doc.data());
+          }
+        }
+
+        setContentData(docsArr);
+      }
+    });
+  }, [courseData]);
+
+  useEffect(() => {
+    if (courseData) {
+      fetchData();
+    }
+  }, [courseData]);
+
+  const handleCreateContent = async () => {
+    const { uid } = courseData;
+    await addContentToCourse({ title: contentName, courseUid: uid });
+    await fetchData();
+    setContentName('');
+    onClose();
+  };
+
+  const handleEditContent = (content) => {
+    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+    const {
+      data: { slug },
+    } = courseData;
+    router.push(`/demo/${pathType}/curso/${slug}/editar/contenido/${content}`);
+  };
 
   return (
     <Flex
@@ -29,7 +79,7 @@ const ContentView = () => {
       align="center"
       justify="space-between"
     >
-      <Modal isOpen={isOpen} isCentered>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Crear un nuevo contenido</ModalHeader>
@@ -43,11 +93,13 @@ const ContentView = () => {
                     placeholder="Clase sobre como plantar tulipanes."
                     borderTopRightRadius="0"
                     borderBottomRightRadius="0"
+                    onChange={(e) => setContentName(e.target.value)}
                   />
                   <Button
                     colorScheme="blue"
                     borderTopLeftRadius="0"
                     borderBottomLeftRadius="0"
+                    onClick={handleCreateContent}
                   >
                     Agregar
                   </Button>
@@ -61,35 +113,56 @@ const ContentView = () => {
         </ModalContent>
       </Modal>
       <Box w="100%">
-        <Flex
-          my="2"
-          wrap="nowrap"
-          justify="space-between"
-          align="center"
-          p="5"
-          border="1px solid"
-          borderColor="gray.200"
-        >
-          <Text>Titulo de clase</Text>
-
-          <Flex wrap="nowrap">
-            <Button
-              colorScheme="yellow"
-              mr="2"
-              rightIcon={<EditIcon />}
-              variant="ghost"
-            >
-              Editar
-            </Button>
-            <Button
-              colorScheme="red"
-              rightIcon={<DeleteIcon />}
-              variant="ghost"
-            >
-              Eliminar
-            </Button>
+        {contentData.length <= 0 && (
+          <Flex
+            my="2"
+            wrap="nowrap"
+            justify="center"
+            align="center"
+            p="5"
+            border="1px solid"
+            borderColor="gray.200"
+          >
+            <Text color="gray.400">
+              No hay contenido en este curso por ahora. Haz click en "Agregar
+              contenido" y comienza a editar.
+            </Text>
           </Flex>
-        </Flex>
+        )}
+        {contentData.length > 0 &&
+          contentData.map((data) => (
+            <Flex
+              key={data.id}
+              my="2"
+              wrap="nowrap"
+              justify="space-between"
+              align="center"
+              p="5"
+              border="1px solid"
+              borderColor="gray.200"
+            >
+              <Text>{data.title}</Text>
+
+              <Flex wrap="nowrap">
+                <Button
+                  colorScheme="yellow"
+                  mr="2"
+                  rightIcon={<EditIcon />}
+                  variant="ghost"
+                  onClick={() => handleEditContent(data.slug)}
+                >
+                  Editar
+                </Button>
+                <Button
+                  colorScheme="red"
+                  rightIcon={<DeleteIcon />}
+                  variant="ghost"
+                >
+                  Eliminar
+                </Button>
+              </Flex>
+            </Flex>
+          ))}
         <Button
           m="30px auto"
           d="block"
