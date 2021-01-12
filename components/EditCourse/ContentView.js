@@ -1,5 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
+import _ from 'lodash';
+
 import {
   Flex,
   Box,
@@ -20,7 +22,8 @@ import {
 import { DeleteIcon, EditIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   addContentToCourse,
-  getSubCollection,
+  deleteContent,
+  useRealtime,
 } from '@/lib/firebase/dataFunctions';
 import { useCourseEditStore, useStore } from '@/lib/store';
 
@@ -30,35 +33,43 @@ const ContentView = () => {
   const [contentName, setContentName] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const courseData = useCourseEditStore((state) => state.courseData);
+
   const appType = useStore((state) => state.appType);
 
-  const fetchData = useCallback(async () => {
-    const { uid } = courseData;
-    await getSubCollection(`courses/${uid}/content`).then((docRef) => {
+  const fetchData = useCallback(
+    async (snapshot) => {
       const docsArr = [];
-      if (!docRef.empty) {
-        for (let i in docRef.docs) {
-          const doc = docRef.docs[i];
+      if (!snapshot.empty) {
+        for (let i in snapshot.docs) {
+          const doc = snapshot.docs[i];
           if (doc.exists) {
-            docsArr.push(doc.data());
+            docsArr.push({ ...doc.data(), uid: doc.id });
           }
         }
 
-        setContentData(docsArr);
+        setContentData(
+          docsArr.length > 0
+            ? _.filter(_.sortBy(docsArr, ['order']), { active: true })
+            : docsArr
+        );
       }
-    });
-  }, [courseData]);
+    },
+    [courseData]
+  );
 
   useEffect(() => {
     if (courseData) {
-      fetchData();
+      useRealtime(`courses/${courseData.uid}/content`, fetchData);
     }
   }, [courseData]);
 
   const handleCreateContent = async () => {
     const { uid } = courseData;
-    await addContentToCourse({ title: contentName, courseUid: uid });
-    await fetchData();
+    await addContentToCourse({
+      title: contentName,
+      courseUid: uid,
+      order: contentData.length + 1,
+    });
     setContentName('');
     onClose();
   };
@@ -69,6 +80,13 @@ const ContentView = () => {
       data: { slug },
     } = courseData;
     router.push(`/demo/${pathType}/curso/${slug}/editar/contenido/${content}`);
+  };
+
+  const handleDeleteContent = async (content) => {
+    const { uid: courseUid } = courseData;
+    const { uid: contentUid, order } = content;
+
+    await deleteContent({ courseUid, contentUid, order });
   };
 
   return (
@@ -141,7 +159,18 @@ const ContentView = () => {
               border="1px solid"
               borderColor="gray.200"
             >
-              <Text>{data.title}</Text>
+              <Flex align="center">
+                <Text
+                  as="span"
+                  fontSize="3xl"
+                  color="gray.300"
+                  fontWeight="bolder"
+                  mr={5}
+                >
+                  {data.order}.
+                </Text>
+                <Text fontSize="xl">{data.title}</Text>
+              </Flex>
 
               <Flex wrap="nowrap">
                 <Button
@@ -157,6 +186,7 @@ const ContentView = () => {
                   colorScheme="red"
                   rightIcon={<DeleteIcon />}
                   variant="ghost"
+                  onClick={() => handleDeleteContent(data)}
                 >
                   Eliminar
                 </Button>
