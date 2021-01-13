@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-// import dynamic from 'next/dynamic';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import {
   Box,
   Button,
@@ -13,9 +13,48 @@ import { Editor } from '@/components';
 import 'highlight.js/styles/default.css';
 
 import '@/lib/highlight';
+import { useCourseEditStore, useStore } from '@/lib/store';
+import { updateContent } from '@/lib/firebase/dataFunctions';
 
 const EditContentView = () => {
+  const appType = useStore((state) => state.appType);
+  const [contentData, courseData] = useCourseEditStore((state) => [
+    state.contentData,
+    state.courseData,
+  ]);
+  const router = useRouter();
+  const [contentTitle, setContentTitle] = useState('');
   const [editorValue, setEditorValue] = useState('');
+
+  useEffect(() => {
+    if (contentData) {
+      console.log(contentData.data.data);
+      setContentTitle(contentData.data.title);
+      setEditorValue(contentData.data.data);
+    }
+  }, [contentData]);
+
+  useEffect(() => {
+    if (appType && courseData) {
+      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+      router.prefetch(`/demo/${pathType}/curso/${courseData.data.slug}/editar`);
+    }
+  }, [courseData, appType]);
+
+  const handleSave = async () => {
+    const data = {
+      title: contentTitle,
+      data: editorValue,
+    };
+    await updateContent({
+      courseUid: courseData.uid,
+      contentUid: contentData.uid,
+      data,
+    }).then(() => {
+      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+      router.push(`/demo/${pathType}/curso/${courseData.data.slug}/editar`);
+    });
+  };
 
   return (
     <Box pt="5">
@@ -28,10 +67,14 @@ const EditContentView = () => {
             type="text"
             variant="flushed"
             placeholder="Ingresa un titulo para el contenido"
+            value={contentTitle}
+            onChange={(e) => setContentTitle(e.target.value)}
           />
         </FormControl>
 
-        <Button colorScheme="blue">Guardar cambios</Button>
+        <Button colorScheme="blue" onClick={handleSave}>
+          Guardar cambios
+        </Button>
       </Flex>
       <Heading as="h3" fontSize="lg" mt="5">
         Contenido
