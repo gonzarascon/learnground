@@ -59,7 +59,12 @@ const ContentView = () => {
 
   useEffect(() => {
     if (courseData) {
-      useRealtime(`courses/${courseData.uid}/content`, fetchData);
+      const unsubscribe = useRealtime(
+        `courses/${courseData.uid}/content`,
+        fetchData
+      );
+
+      return () => unsubscribe();
     }
   }, [courseData]);
 

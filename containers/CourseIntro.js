@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import useSWR from 'swr';
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -9,11 +11,23 @@ import {
   List,
   ListIcon,
   ListItem,
+  Skeleton,
   Text,
 } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
+import { useCourseStore } from '@/lib/store';
+import { fetcher } from '@/lib/helpers';
 
 const CourseIntro = () => {
+  const courseData = useCourseStore((state) => state.courseData);
+  const { data } = useSWR(
+    courseData && `/api/categories/${courseData.categoryId}`,
+    fetcher
+  );
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
   return (
     <Grid
       templateColumns="repeat(2, 1fr)"
@@ -22,12 +36,22 @@ const CourseIntro = () => {
       h="calc(100vh - 94px - 21px)"
     >
       <Box>
+        <Skeleton isLoaded={data} mb={5}>
+          <Flex align="center">
+            <Text mr={5} fontWeight="400" fontSize="xl" fontStyle="oblique">
+              Categoría
+            </Text>
+            <Badge colorScheme="blue">{data && data[0].fields.name}</Badge>
+          </Flex>
+        </Skeleton>
         <Heading as="h3">
-          Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4
+          {courseData ? courseData?.title : <Skeleton height="20px" />}
         </Heading>
 
         <Image
-          src="https://via.placeholder.com/641x370"
+          src={courseData?.thumbnail}
+          alt={courseData?.title}
+          fallbackSrc="https://via.placeholder.com/641x370"
           w="100%"
           rounded="lg"
           mt="3"
@@ -35,31 +59,28 @@ const CourseIntro = () => {
           fit="cover"
         />
         <Text color="gray.500" mt={3} px={2}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur
-          consequatur quod sit! Eveniet nisi dolores obcaecati iusto provident?
-          Possimus nostrum omnis deserunt. Eaque et culpa repellendus mollitia
-          rem maiores est facilis aspernatur impedit non id neque consequuntur,
-          cupiditate sit praesentium suscipit? Dicta expedita praesentium, enim
-          dolorem hic est quod nostrum?
+          {courseData ? (
+            courseData.description
+          ) : (
+            <>
+              <Skeleton height="20px" />
+              <Skeleton height="20px" />
+              <Skeleton height="20px" />
+            </>
+          )}
         </Text>
       </Box>
-      <Flex direction="column" maxH="50%">
+      <Flex direction="column" maxH="50%" mt={14}>
         <Heading as="h4" fontSize="2xl">
           En este curso aprenderás:
         </Heading>
         <List mt={3} spacing={3}>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />A crear una hoja
-            de estilos desde 0.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />A crear una hoja
-            de estilos desde 0.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />A crear una hoja
-            de estilos desde 0.
-          </ListItem>
+          {courseData?.concepts.map((concept, index) => (
+            <ListItem key={`${concept}-${index}`}>
+              <ListIcon as={CheckCircleIcon} color="green.500" />
+              {concept}
+            </ListItem>
+          ))}
         </List>
 
         <Button

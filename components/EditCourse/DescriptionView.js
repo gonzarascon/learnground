@@ -1,4 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
+import _ from 'lodash';
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
 import {
   Flex,
   Box,
@@ -16,24 +19,68 @@ import {
 import { DeleteIcon, AddIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { useDropzone } from 'react-dropzone';
-
-// temp
-const options = [
-  { value: 'cat_1', label: 'categoria 1' },
-  { value: 'cat_2', label: 'categoria 2' },
-];
+import { useCourseEditStore, useStore } from '@/lib/store';
+import { fetcher, slugify } from '@/lib/helpers';
+import { updateCollection, uploadFile } from '@/lib/firebase/dataFunctions';
 
 const DescriptionView = () => {
-  const [data, setData] = useState({ image: undefined, concepts: [''] });
+  const courseData = useCourseEditStore((state) => state.courseData);
+  const { data: categories } = useSWR('/api/categories/get', fetcher);
+  const appType = useStore((state) => state.appType);
+  const router = useRouter();
+  const [data, setData] = useState({
+    image: undefined,
+    concepts: [''],
+    title: '',
+    categoryId: null,
+    description: '',
+  });
 
-  const onDrop = useCallback((acceptedFiles) => {
-    setData({
+  useEffect(() => {
+    setData((data) => ({
       ...data,
-      image: Object.assign(acceptedFiles[0], {
-        preview: URL.createObjectURL(acceptedFiles[0]),
-      }),
+      title: courseData.data.title,
+      categoryId: courseData.data.categoryId,
+    }));
+  }, [courseData]);
+
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      if (acceptedFiles) {
+        setData({
+          ...data,
+          image: Object.assign(acceptedFiles[0], {
+            file: acceptedFiles[0],
+            preview: URL.createObjectURL(acceptedFiles[0]),
+          }),
+        });
+      }
+    },
+    [data]
+  );
+
+  const handlePublish = async () => {
+    let thumbnailURL = '';
+    if (data.image) {
+      await uploadFile(data.image).then(async (snapshot) => {
+        thumbnailURL = await snapshot.ref.getDownloadURL();
+      });
+    }
+
+    await updateCollection('courses', courseData.uid, {
+      title: data.title,
+      slug: slugify(data.title),
+      thumbnail: thumbnailURL,
+      description: data.description,
+      concepts: data.concepts,
+    }).then(() => {
+      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+
+      console.log('UPDATE FINISHED');
+
+      router.push(`/demo/${pathType}/curso/${slugify(data.title)}/`);
     });
-  }, []);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -78,22 +125,32 @@ const DescriptionView = () => {
       align="center"
       justify="space-between"
     >
-      <Button colorScheme="green" alignSelf="flex-end">
+      <Button colorScheme="green" alignSelf="flex-end" onClick={handlePublish}>
         Publicar curso
       </Button>
       <Heading as="h4">Información del curso</Heading>
       <Grid templateColumns="1fr 1fr" gap="20px" w="100%" mt="10">
         <FormControl>
           <FormLabel>Título</FormLabel>
-          <Input placeholder="Titulo del curso" />
+          <Input
+            placeholder="Titulo del curso"
+            value={data.title}
+            onChange={(e) => setData({ ...data, title: e.target.value })}
+          />
         </FormControl>
         <FormControl>
           <FormLabel>Categoría</FormLabel>
           <Select
-            options={options}
+            options={categories}
+            isLoading={categories ? false : true}
             placeholder="Busca una categoría"
-            isClearable
-            value={options[0]}
+            isSearchable
+            value={_.find(categories, (c) => c.fields.id === data.categoryId)}
+            getOptionLabel={(option) => option.fields.name}
+            getOptionValue={(option) => option.fields.id}
+            onChange={(v) =>
+              setData((data) => ({ ...data, categoryId: v.fields.id }))
+            }
           />
         </FormControl>
         <Box>
@@ -133,6 +190,9 @@ const DescriptionView = () => {
               resize="none"
               placeholder="Escribe una descripción para tu curso."
               isRequired
+              onChange={(e) =>
+                setData({ ...data, description: e.target.value })
+              }
             ></Textarea>
           </FormControl>
           <FormControl>
