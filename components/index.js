@@ -9,6 +9,7 @@ export { default as ProgressIndicator } from './ProgressIndicator';
 export { default as AppHead } from './AppHead';
 
 export { default as CourseCard } from './CourseCard';
+export { default } from './ActionButton';
 
 export { default as Markdown } from './Markdown';
 export { default as ChatRoom } from './ChatRoom';

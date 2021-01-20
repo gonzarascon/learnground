@@ -50,7 +50,13 @@ const DemoLayout = ({ children, isCourse = false }) => {
   }, []);
 
   return (
-    <Flex minH="100vh" direction="column" align="center" position="relative">
+    <Flex
+      minH="100vh"
+      direction="column"
+      align="center"
+      position="relative"
+      className="layout"
+    >
       <Header version="demo" isCourse={isCourse} />
       {isCourse && <ClassList />}
       <Box

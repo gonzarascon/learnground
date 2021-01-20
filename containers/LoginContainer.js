@@ -47,6 +47,11 @@ const LoginContainer = () => {
       .finally(() => {
         const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
 
+        if (router.query.fromCourse === 'true' && router.query.courseSlug) {
+          router.push(`/demo/${pathType}/curso/${router.query.courseSlug}`);
+          return;
+        }
+
         router.push(`/demo/${pathType}`);
       });
   };
@@ -61,6 +66,7 @@ const LoginContainer = () => {
         align="center"
         m="0 auto"
         p={5}
+        bgColor="gray.50"
       >
         <Heading as="h3">Iniciar Sesión</Heading>
 

@@ -17,14 +17,7 @@ GamificadoCourse.propTypes = {
   demoMD: PropTypes.any,
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [{ params: { slug: 'master-en-css', 'class-number': '0' } }],
-    fallback: false,
-  };
-}
-
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const mdPath = path.join(process.cwd(), 'public/demo.md');
 
   const demoMD = fs.readFileSync(mdPath, 'utf8');

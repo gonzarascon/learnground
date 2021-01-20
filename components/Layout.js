@@ -6,7 +6,7 @@ import { Header } from '@/components';
 
 const Layout = ({ children }) => {
   return (
-    <Flex minH="100vh" direction="column">
+    <Flex minH="100vh" direction="column" className="layout">
       <Header />
       <Box
         as="main"
