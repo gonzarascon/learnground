@@ -19,8 +19,10 @@
     "baseUrl": ".",
     "paths": {
       "@/components": ["components"],
+      "@/components/*": ["components/*"],
       "@/containers": ["containers"],
-      "@/lib/*": ["lib/*"]
+      "@/lib/*": ["lib/*"],
+      "@/custom-ckeditor/*":["custom-ckeditor/*"]
     }
   }
 }
