@@ -1,14 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Box, Flex, Text, Heading } from '@chakra-ui/react';
+import { Box, Flex, Text, Heading, Skeleton } from '@chakra-ui/react';
+import { format } from 'date-fns';
 
 const MotionBox = motion.custom(Box);
 
-const ChatMessage = ({ owned = false, hasBadge = false, id = '' }) => {
+const ChatMessage = ({
+  owned = false,
+  hasBadge = false,
+  id = '',
+  username,
+  message,
+  createdAt,
+}) => {
   return (
     <MotionBox
-      layoutId={id}
+      key={id}
       initial={{ opacity: 0, y: 50, scale: 0.3 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       maxW="95%"
@@ -18,6 +26,7 @@ const ChatMessage = ({ owned = false, hasBadge = false, id = '' }) => {
       bg={owned ? 'blue.400' : 'gray.400'}
       p="5"
       rounded="md"
+      className="chatMessage"
     >
       <Flex direction="row" wrap="nowrap" align="center" mb="2">
         {/**
@@ -27,16 +36,15 @@ const ChatMessage = ({ owned = false, hasBadge = false, id = '' }) => {
           <Box w="15px" h="15px" bg="teal.300" rounded="md" mr="3"></Box>
         )}
         <Heading as="h4" size="md">
-          Dan Avramov
+          {username}
         </Heading>
       </Flex>
-      <Text>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo
-        quisquam, id mollitia quos laborum et?
-      </Text>
-      <Text fontSize="xs" fontStyle="oblique" textAlign="right" mt={1}>
-        20/11/20 13:30
-      </Text>
+      <Text>{message}</Text>
+      <Skeleton isLoaded={createdAt !== null} h="18px">
+        <Text fontSize="xs" fontStyle="oblique" textAlign="right" mt={1}>
+          {createdAt && format(new Date(createdAt.toDate()), 'dd/MM/yy HH:mm')}
+        </Text>
+      </Skeleton>
     </MotionBox>
   );
 };
@@ -45,6 +53,9 @@ ChatMessage.propTypes = {
   hasBadge: PropTypes.bool,
   id: PropTypes.string,
   owned: PropTypes.bool,
+  username: PropTypes.string,
+  message: PropTypes.string,
+  createdAt: PropTypes.string,
 };
 
 export default ChatMessage;

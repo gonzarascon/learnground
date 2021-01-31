@@ -33,6 +33,7 @@
     "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "color-js": "^1.0.5",
+    "date-fns": "^2.16.1",
     "dotenv-webpack": "^4.0.0",
     "firebase": "^8.2.1",
     "firebase-admin": "^9.4.2",
