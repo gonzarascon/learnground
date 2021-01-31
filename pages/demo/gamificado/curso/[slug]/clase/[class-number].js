@@ -1,30 +1,36 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import fs from 'fs';
-import path from 'path';
 import { DemoLayout } from '@/components';
 import { ClassView } from '@/containers';
+import { getContentByNumber } from '@/lib/firebase/dataFunctionsNode';
 
-function GamificadoCourse({ demoMD }) {
+function GamificadoCourse({ data }) {
   return (
     <DemoLayout isCourse>
-      <ClassView source={demoMD} />
+      <ClassView source={data} />
     </DemoLayout>
   );
 }
 
 GamificadoCourse.propTypes = {
-  demoMD: PropTypes.any,
+  data: PropTypes.string,
 };
 
-export async function getServerSideProps() {
-  const mdPath = path.join(process.cwd(), 'public/demo.md');
+/**
+ *
+ * @param {import('next').GetServerSidePropsContext} ctx;
+ */
+export async function getServerSideProps(ctx) {
+  const { params } = ctx;
 
-  const demoMD = fs.readFileSync(mdPath, 'utf8');
+  const contentData = await getContentByNumber({
+    courseSlug: params.slug,
+    contentNumber: params['class-number'],
+  });
 
   return {
     props: {
-      demoMD,
+      data: contentData.data.data,
     },
   };
 }

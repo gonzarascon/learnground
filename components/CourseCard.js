@@ -15,7 +15,7 @@ function CourseCard({
   const router = useRouter();
 
   useEffect(() => {
-    const path = `${router.pathname}/curso/${slug}/${lastClass}`;
+    const path = `${router.pathname}/curso/${slug}`;
     setCoursePath(path);
     router.prefetch(path);
   }, []);
@@ -25,7 +25,14 @@ function CourseCard({
   };
 
   return (
-    <Box rounded="lg" borderWidth="1px" shadow="md" overflow="hidden" maxW="sm">
+    <Box
+      rounded="lg"
+      borderWidth="1px"
+      shadow="md"
+      overflow="hidden"
+      maxW="sm"
+      bgColor="white"
+    >
       <Image
         src={image.length > 0 ? image : '/images/course_placeholder.png'}
         alt={title}

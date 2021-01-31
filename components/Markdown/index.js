@@ -23,7 +23,7 @@ const Markdown = ({ source = '' }) => {
       roundedBottomLeft="lg"
       position="relative"
     >
-      <Box p="10">
+      <Box p="10" height="100%">
         <ReactMarkdown renderers={renderers} plugins={[gfm, gemoji, highlight]}>
           {source}
         </ReactMarkdown>

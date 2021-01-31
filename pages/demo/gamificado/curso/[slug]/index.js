@@ -4,12 +4,19 @@ import { DemoLayout } from '@/components';
 import { CourseIntroContainer } from '@/containers';
 import { getCourseBySlug } from '@/lib/firebase/dataFunctionsNode';
 import { useCourseStore } from '@/lib/store';
+import { getCourseContentsPreview } from '@/lib/firebase/dataFunctions';
 
 function GamificadoCourse({ courseData }) {
   const setCourseData = useCourseStore((state) => state.setCourseData);
 
   useEffect(() => {
-    setCourseData(courseData);
+    const fetchLeftData = async () => {
+      const previews = await getCourseContentsPreview(courseData.uid);
+
+      setCourseData({ ...courseData, contents: previews });
+    };
+
+    fetchLeftData();
   }, [courseData]);
 
   return (

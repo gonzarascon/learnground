@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Flex, Grid, Heading, Text } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
 import { CourseCard } from '@/components';
+import { useRealtime } from '@/lib/firebase/dataFunctions';
 
 function DemoIndex() {
   const router = useRouter();
+  const [courses, setCourses] = useState([]);
   const [appType, userType] = useStore((state) => [
     state.appType,
     state.userType,
@@ -19,6 +21,30 @@ function DemoIndex() {
 
     router.push(URL);
   };
+
+  const fetchData = useCallback(async (snapshot) => {
+    const docsArr = [];
+    if (!snapshot.empty) {
+      for (let i in snapshot.docs) {
+        const doc = snapshot.docs[i];
+        if (doc.exists && doc.id !== 'model') {
+          docsArr.push({ ...doc.data(), uid: doc.id });
+        }
+      }
+
+      setCourses(docsArr);
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = useRealtime(`courses`, fetchData);
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    console.log(courses);
+  }, [courses]);
 
   return (
     <Flex direction="column" w="100%" py="10">
@@ -60,11 +86,15 @@ function DemoIndex() {
         gridTemplateColumns="repeat(auto-fill, 300px)"
         mt="10"
       >
-        <CourseCard
-          title="Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4"
-          progress={0.5}
-          slug="master-en-css"
-        />
+        {courses.map((course) => (
+          <CourseCard
+            title={course.title}
+            progress={0.5}
+            image={course.thumbnail}
+            slug={course.slug}
+            key={course.uid}
+          />
+        ))}
       </Grid>
     </Flex>
   );

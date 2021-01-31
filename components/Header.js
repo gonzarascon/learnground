@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import _ from 'lodash';
 import { Flex, Grid, Heading, Link as ChakraLink } from '@chakra-ui/react';
 import { AvatarMenu, ProgressIndicator } from '@/components';
-import { useStore } from '@/lib/store';
+import { useCourseStore, useStore, useUserStore } from '@/lib/store';
 
 const Header = ({ version, isCourse }) => {
+  const [progress, setProgress] = useState();
   const loggedIn = useStore((state) => state.loggedIn);
+  const uid = useUserStore((state) => state.uid);
+  const courseData = useCourseStore((state) => state.courseData);
+
+  useEffect(() => {
+    if (courseData && uid) {
+      setProgress(
+        _.find(courseData.subscribers, (s) => s.uid === uid)?.progress
+      );
+    }
+  }, [courseData, uid]);
 
   /**
    * processVersion
@@ -39,7 +51,9 @@ const Header = ({ version, isCourse }) => {
           {/* TODO: Conditional rendering for this heading */}
           {isCourse && (
             <Heading as="h2" size="sm" maxWidth="500px" isTruncated>
-              Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4
+              {courseData && courseData.title
+                ? courseData.title
+                : 'Cargando...'}
             </Heading>
           )}
 
@@ -48,7 +62,7 @@ const Header = ({ version, isCourse }) => {
             justify="flex-end"
             gridColumn={isCourse ? 'auto' : '3/4'}
           >
-            {isCourse && <ProgressIndicator />}
+            {isCourse && <ProgressIndicator progress={progress} />}
 
             {version === 'demo' && loggedIn && <AvatarMenu />}
             {version === 'demo' && !loggedIn && (

@@ -10,7 +10,7 @@ const EditCourseView = () => {
           <Tab>Contenidos</Tab>
           <Tab>Detalles</Tab>
         </TabList>
-        <TabPanels>
+        <TabPanels bgColor="white" roundedBottom="md">
           <TabPanel>
             <ContentView />
           </TabPanel>

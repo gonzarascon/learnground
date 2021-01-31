@@ -37,11 +37,18 @@ const DescriptionView = () => {
   });
 
   useEffect(() => {
-    setData((data) => ({
-      ...data,
-      title: courseData.data.title,
-      categoryId: courseData.data.categoryId,
-    }));
+    if (courseData) {
+      setData((data) => ({
+        ...data,
+        title: courseData.data.title,
+        categoryId: courseData.data.categoryId,
+        concepts: courseData.data.concepts,
+        image: {
+          preview: courseData.data.thumbnail,
+        },
+        description: courseData.data.description,
+      }));
+    }
   }, [courseData]);
 
   const onDrop = useCallback(
@@ -190,6 +197,7 @@ const DescriptionView = () => {
               resize="none"
               placeholder="Escribe una descripción para tu curso."
               isRequired
+              value={data.description}
               onChange={(e) =>
                 setData({ ...data, description: e.target.value })
               }
