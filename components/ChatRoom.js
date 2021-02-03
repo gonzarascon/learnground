@@ -57,8 +57,6 @@ const ChatRoom = () => {
     if (chatMessages.length && messagesContainer) {
       const container = messagesContainer.current;
 
-      console.log(container.lastChild);
-
       container.scrollTop = container.scrollHeight;
     }
   }, [chatMessages, messagesContainer]);
