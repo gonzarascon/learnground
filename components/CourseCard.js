@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
 import { Box, Button, Flex, Heading, Image, Progress } from '@chakra-ui/react';
+import { useStore } from '@/lib/store';
 
 function CourseCard({
   title = '',
@@ -12,18 +13,23 @@ function CourseCard({
   lastClass = 0,
 }) {
   const [coursePath, setCoursePath] = useState('');
+  const appType = useStore((state) => state.appType);
   const router = useRouter();
 
   useEffect(() => {
-    const path = `${router.pathname}/curso/${slug}`;
-    setCoursePath(path);
-    router.prefetch(path);
-  }, []);
+    if (appType) {
+      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+      const path = `/demo/${pathType}/curso/${slug}`;
+      setCoursePath(path);
+      router.prefetch(path);
+    }
+  }, [appType]);
 
   const handleButtonClick = () => {
     router.push(coursePath);
   };
 
+  console.log(image);
   return (
     <Box
       rounded="lg"
@@ -34,9 +40,12 @@ function CourseCard({
       bgColor="white"
     >
       <Image
-        src={image.length > 0 ? image : '/images/course_placeholder.png'}
+        src={image}
+        fallbackSrc="/images/course_placeholder.png"
         alt={title}
-        objectFit="contain"
+        objectFit="cover"
+        h="224px"
+        w="100%"
       />
       <Box p="5">
         <Heading as="h4" fontSize="md" isTruncated title={title}>

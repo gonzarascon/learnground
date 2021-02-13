@@ -30,7 +30,7 @@ const editorConfiguration = {
     'redo',
   ],
   ckfinder: {
-    uploadUrl: 'https://google.com/',
+    uploadUrl: '/api/imageUpload',
   },
   image: {
     toolbar: [
@@ -40,7 +40,7 @@ const editorConfiguration = {
       'imageTextAlternative',
     ],
     upload: {
-      types: ['png', 'jpg'],
+      types: ['png', 'jpg', 'gif'],
     },
   },
   height: 700,

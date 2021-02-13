@@ -48,14 +48,16 @@ const Markdown = ({ source = '' }) => {
 
   return (
     <Box
-      overflowY="auto"
+      overflow="hidden"
       borderColor="gray.100"
       borderWidth="2px"
       roundedTopLeft="lg"
       roundedBottomLeft="lg"
       position="relative"
+      height="100%"
+      maxH="720px"
     >
-      <Box p="10" height="100%" bgColor="white">
+      <Box p="10" height="100%" bgColor="white" overflowY="auto">
         <ReactMarkdown renderers={renderers} plugins={[gfm, gemoji]}>
           {source}
         </ReactMarkdown>

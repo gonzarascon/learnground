@@ -85,6 +85,7 @@ function DemoIndex() {
         as="section"
         gridTemplateColumns="repeat(auto-fill, 300px)"
         mt="10"
+        gap={6}
       >
         {courses.map((course) => (
           <CourseCard
