@@ -9,17 +9,27 @@ import { Box, Button, Flex } from '@chakra-ui/react';
 import { Heading, Code } from './renderers';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
-import { useCourseStore } from '@/lib/store';
+import { useCourseStore, useUserStore } from '@/lib/store';
+import { updateSubscriber } from '@/lib/firebase/dataFunctions';
 
 const Markdown = ({ source = '' }) => {
   const router = useRouter();
   const [isFirstClass, setIsFirstClass] = useState(false);
   const [isLastClass, setIsLastClass] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
-  const contents = useCourseStore((state) => state.contentsPreview);
+  /**
+   * @type {Array} contents
+   */
+  const [contents, courseId] = useCourseStore((state) => [
+    state.contentsPreview,
+    state.courseId,
+  ]);
+
+  const uid = useUserStore((state) => state.uid);
 
   useEffect(() => {
     if (router && contents) {
+      console.log(router.query);
       const classIndex = contents.findIndex(
         (o) => o.order.toString() === router.query['class-number']
       );
@@ -30,7 +40,10 @@ const Markdown = ({ source = '' }) => {
         /**
          * This **is not** for disabling buttons but for redirection to congrats page
          */
+        setIsFirstClass(false);
         setIsLastClass(true);
+      } else {
+        setIsFirstClass(false);
       }
     }
   }, [router, contents]);
@@ -40,6 +53,54 @@ const Markdown = ({ source = '' }) => {
       setHasLoaded(true);
     }
   }, [contents]);
+
+  /**
+   *
+   * @param {Number | undefined} lastClass
+   */
+  const updateSubscriberData = async (currentClass) => {
+    const progress = (currentClass * 100) / contents.length;
+    await updateSubscriber({
+      courseUid: courseId,
+      userUid: uid,
+      data: { lastClass: 2, progress },
+    });
+  };
+
+  const handleBackButton = () => {
+    const currentClass = router.query['class-number'];
+
+    const urlToRedirect = router.asPath.replace(
+      `/clase/${currentClass}`,
+      `/clase/${parseInt(currentClass) - 1}`
+    );
+
+    router.push(urlToRedirect);
+  };
+
+  const handleNextButton = () => {
+    const currentClass = router.query['class-number'];
+
+    const nextContent = contents.find(
+      (o) => o.order === parseInt(currentClass) + 1
+    );
+
+    let urlToRedirect;
+
+    if (nextContent) {
+      urlToRedirect = router.asPath.replace(
+        `/clase/${currentClass}`,
+        `/clase/${nextContent.order}`
+      );
+    } else {
+      urlToRedirect = router.asPath.replace(
+        `/clase/${currentClass}`,
+        `/finalizado`
+      );
+    }
+
+    updateSubscriberData(currentClass).then(() => router.push(urlToRedirect));
+  };
 
   const renderers = {
     heading: Heading,
@@ -55,7 +116,6 @@ const Markdown = ({ source = '' }) => {
       roundedBottomLeft="lg"
       position="relative"
       height="100%"
-      maxH="720px"
     >
       <Box p="10" height="100%" bgColor="white" overflowY="auto">
         <ReactMarkdown renderers={renderers} plugins={[gfm, gemoji]}>
@@ -77,6 +137,7 @@ const Markdown = ({ source = '' }) => {
         <Button
           colorScheme="blue"
           leftIcon={<ChevronLeftIcon />}
+          onClick={handleBackButton}
           disabled={!hasLoaded || isFirstClass}
         >
           Clase anterior
@@ -85,6 +146,7 @@ const Markdown = ({ source = '' }) => {
           colorScheme="blue"
           rightIcon={<ChevronRightIcon />}
           disabled={!hasLoaded}
+          onClick={handleNextButton}
         >
           Próxima clase
         </Button>

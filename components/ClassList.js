@@ -9,11 +9,25 @@ const ClassList = () => {
   const contents = useCourseStore((state) => state.contentsPreview) || [];
 
   return (
-    <Box position="absolute" top="120px" left="25px">
-      <Heading as="h3" fontSize="lg">
+    <Box
+      position={{ base: 'relative', xxxl: 'absolute' }}
+      top={{ xxxl: '120px' }}
+      left={{ xxxl: '25px' }}
+      d={{ base: 'flex', xxxl: 'block' }}
+      alignItems="center"
+      w={{ base: '100%', xxxl: 'auto' }}
+      maxW="760px"
+      mt={{ base: '5', xxxl: 'unset' }}
+    >
+      <Heading as="h3" fontSize="lg" mr="5" flex="1 1 160px">
         Lista de clases
       </Heading>
-      <List maxW="200px">
+      <List
+        maxW={{ xxxl: '200px' }}
+        d={{ base: 'flex', xxxl: 'block' }}
+        justifyContent="space-evenly"
+        w="100%"
+      >
         {contents.map((content) => {
           const isActive = content.order.toString() === query['class-number'];
 
