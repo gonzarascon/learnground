@@ -62,7 +62,7 @@ function CourseCard({
             Comenzar
           </Button>
 
-          {progress && (
+          {/*progress && (
             <Box w="50%">
               <Heading as="h5" fontWeight="300" fontSize="sm">
                 Progreso
@@ -74,7 +74,7 @@ function CourseCard({
                 mt="2"
               />
             </Box>
-          )}
+          )*/}
         </Flex>
       </Box>
     </Box>

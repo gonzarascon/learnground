@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { useStore, useProfileStore } from '@/lib/store';
 import { parseCammelCase } from '@/lib/helpers';
-import { parseXPToLevel } from '@/lib/xpHandler';
+import { parseXPToLevel } from '@/lib/gamifiedHandler';
 
 const UserInformation = () => {
   const setShopOpen = useStore((state) => state.setShopOpen);

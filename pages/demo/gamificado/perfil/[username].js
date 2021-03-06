@@ -4,13 +4,40 @@ import { DemoLayout } from '@/components';
 import { ProfileView } from '@/containers';
 import { getProfileData } from '@/lib/firebase/dataFunctionsNode';
 import { useProfileStore, useUserStore } from '@/lib/store';
+import useCookies from '@/lib/useCookies';
+import { missionsDataset } from '@/lib/gamifiedHandler';
 
 function GamificadoProfile({ profileData, profileID }) {
   const uid = useUserStore((state) => state.uid);
+  const [cookieValue, setCookie, isLoading] = useCookies();
   const [setProfileData, setVisitorOwner] = useProfileStore((state) => [
     state.setProfileData,
     state.setVisitorOwner,
   ]);
+
+  useEffect(() => {
+    const badgeToEarn = missionsDataset.find(
+      (obj) => obj.pk === 'first_view_profile'
+    );
+
+    if (!isLoading) {
+      if (!cookieValue) {
+        setCookie({
+          badges: [badgeToEarn],
+        });
+      } else {
+        const badges = cookieValue.badges || [];
+
+        if (!badges.find((obj) => obj.pk === 'first_view_profile')) {
+          setCookie({
+            badges: [...badges, badgeToEarn],
+          });
+        }
+      }
+      //TODO: Callback to database here
+    }
+  }, [cookieValue]);
+
   useEffect(() => {
     setProfileData(profileData);
 
@@ -23,6 +50,7 @@ function GamificadoProfile({ profileData, profileID }) {
       setVisitorOwner(false);
     };
   }, [uid]);
+
   return (
     <DemoLayout>
       <ProfileView />

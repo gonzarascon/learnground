@@ -39,7 +39,6 @@ const ClassList = () => {
               _hover={!isActive && { backgroundColor: 'blue.200' }}
               p="2"
               rounded="md"
-              cursor="pointer"
               mb="2"
               title="Clase 1: Configuracion del entorno"
               bg={isActive ? 'blue.400' : 'blue.100'}
