@@ -3,16 +3,27 @@ import PropTypes from 'prop-types';
 import { DemoLayout } from '@/components';
 import { ProfileView } from '@/containers';
 import { getProfileData } from '@/lib/firebase/dataFunctionsNode';
-import { useProfileStore, useUserStore } from '@/lib/store';
+import { useProfileStore, useStore, useUserStore } from '@/lib/store';
 import useCookies from '@/lib/useCookies';
 import { missionsDataset } from '@/lib/gamifiedHandler';
+import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
 
 function GamificadoProfile({ profileData, profileID }) {
-  const uid = useUserStore((state) => state.uid);
+  const [uid] = useUserStore((state) => [state.uid]);
+
+  const [profileAlert, setProfileAlert] = useStore((state) => [
+    state.profileAlert,
+    state.setProfileAlert,
+  ]);
   const [cookieValue, setCookie, isLoading] = useCookies();
-  const [setProfileData, setVisitorOwner] = useProfileStore((state) => [
+  const [
+    setProfileData,
+    setVisitorOwner,
+    setBadge,
+  ] = useProfileStore((state) => [
     state.setProfileData,
     state.setVisitorOwner,
+    state.setBadge,
   ]);
 
   useEffect(() => {
@@ -20,10 +31,15 @@ function GamificadoProfile({ profileData, profileID }) {
       (obj) => obj.pk === 'first_view_profile'
     );
 
-    if (!isLoading) {
+    if (!isLoading && badgeToEarn) {
       if (!cookieValue) {
         setCookie({
           badges: [badgeToEarn],
+        });
+
+        const { badgeId, xpAmmount } = badgeToEarn;
+        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+          setBadge(badgeId);
         });
       } else {
         const badges = cookieValue.badges || [];
@@ -32,11 +48,21 @@ function GamificadoProfile({ profileData, profileID }) {
           setCookie({
             badges: [...badges, badgeToEarn],
           });
+
+          const { badgeId, xpAmmount } = badgeToEarn;
+          updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+            setBadge(badgeId);
+          });
         }
       }
-      //TODO: Callback to database here
     }
-  }, [cookieValue]);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (profileAlert) {
+      setProfileAlert(false);
+    }
+  }, [profileAlert]);
 
   useEffect(() => {
     setProfileData(profileData);

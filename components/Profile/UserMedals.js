@@ -32,8 +32,9 @@ const UserMedals = () => {
           data.badges.map((badge) => {
             const Attachments = badge.fields.Attachments;
             const image = Attachments
-              ? Attachments[0].thumbnails.small.url
+              ? Attachments[0].thumbnails.large.url
               : null;
+
             return (
               <Tooltip
                 label={badge.fields.description}
@@ -48,7 +49,7 @@ const UserMedals = () => {
                   rounded="100%"
                   bg="gray.300"
                   bgImg={
-                    _.find(profileData.badges, badge.fields.id)
+                    _.find(profileData.badges, (b) => b === badge.fields.id)
                       ? `url(${image})`
                       : 'none'
                   }

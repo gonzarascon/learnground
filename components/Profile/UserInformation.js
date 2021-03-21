@@ -8,18 +8,52 @@ import {
   Progress,
   Text,
 } from '@chakra-ui/react';
-import { useStore, useProfileStore } from '@/lib/store';
+import { useStore, useProfileStore, useUserStore } from '@/lib/store';
 import { parseCammelCase } from '@/lib/helpers';
-import { parseXPToLevel } from '@/lib/gamifiedHandler';
+import { missionsDataset, parseXPToLevel } from '@/lib/gamifiedHandler';
+import useCookies from '@/lib/useCookies';
+import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
 
 const UserInformation = () => {
+  const uid = useUserStore((state) => state.uid);
   const setShopOpen = useStore((state) => state.setShopOpen);
   const [userLevel, setUserLevel] = useState(null);
-  const [profileData, visitorIsOwner] = useProfileStore((state) => [
+  const [profileData, visitorIsOwner, setBadge] = useProfileStore((state) => [
     state.profileData,
     state.visitorIsOwner,
+    state.setBadge,
   ]);
+  const [cookieValue, setCookie] = useCookies();
+
   const handleStoreOpen = () => {
+    const badgeToEarn = missionsDataset.find(
+      (obj) => obj.pk === 'first_view_store'
+    );
+
+    if (!cookieValue) {
+      setCookie({
+        badges: [badgeToEarn],
+      });
+
+      const { badgeId, xpAmmount } = badgeToEarn;
+      updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+        setBadge(badgeId);
+      });
+    } else {
+      const badges = cookieValue.badges || [];
+
+      if (!badges.find((obj) => obj.pk === 'first_view_store')) {
+        setCookie({
+          badges: [...badges, badgeToEarn],
+        });
+
+        const { badgeId, xpAmmount } = badgeToEarn;
+        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+          setBadge(badgeId);
+        });
+      }
+    }
+
     setShopOpen(true);
   };
 

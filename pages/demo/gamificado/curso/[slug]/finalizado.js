@@ -9,16 +9,64 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { LinkIcon } from '@chakra-ui/icons';
-import { useCourseStore, useStore } from '@/lib/store';
+import {
+  useCourseStore,
+  useProfileStore,
+  useStore,
+  useUserStore,
+} from '@/lib/store';
 import { Twitter, Whatsapp } from '@/components/icons';
 import { useRouter } from 'next/router';
 import { Share } from '@/lib/share';
+import { missionsDataset } from '@/lib/gamifiedHandler';
+import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
+import useCookies from '@/lib/useCookies';
 
 function GamificadoCourse() {
   const router = useRouter();
+  const [uid] = useUserStore((state) => [state.uid]);
+
+  const [cookieValue, setCookie, isLoading] = useCookies();
   const [loaded, setLoaded] = useState(false);
-  const appType = useStore((state) => state.appType);
+  const [appType, setProfileAlert] = useStore((state) => [
+    state.appType,
+    state.setProfileAlert,
+  ]);
+  const setBadge = useProfileStore((state) => state.setBadge);
   const courseData = useCourseStore((state) => state.courseData);
+
+  useEffect(() => {
+    const badgeToEarn = missionsDataset.find(
+      (obj) => obj.pk === 'first_view_profile'
+    );
+
+    if (!isLoading && badgeToEarn) {
+      if (!cookieValue) {
+        setCookie({
+          badges: [badgeToEarn],
+        });
+
+        const { badgeId, xpAmmount } = badgeToEarn;
+        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+          setBadge(badgeId);
+        });
+      } else {
+        const badges = cookieValue.badges || [];
+
+        if (!badges.find((obj) => obj.pk === 'first_view_profile')) {
+          setCookie({
+            badges: [...badges, badgeToEarn],
+          });
+
+          const { badgeId, xpAmmount } = badgeToEarn;
+          updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+            setBadge(badgeId);
+          });
+        }
+      }
+      setProfileAlert(true);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (courseData) {

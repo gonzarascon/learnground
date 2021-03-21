@@ -2,16 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
-import { Box, Button, Flex, Heading, Image, Progress } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
 import { useStore } from '@/lib/store';
 
-function CourseCard({
-  title = '',
-  slug = '',
-  image = '',
-  progress,
-  lastClass = 0,
-}) {
+function CourseCard({ title = '', slug = '', image = '' }) {
   const [coursePath, setCoursePath] = useState('');
   const appType = useStore((state) => state.appType);
   const router = useRouter();
@@ -29,7 +23,7 @@ function CourseCard({
     router.push(coursePath);
   };
 
-  console.log(image);
+  console.log('asd');
   return (
     <Box
       rounded="lg"
@@ -57,24 +51,10 @@ function CourseCard({
             variant="solid"
             color="white"
             mt="3"
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick()}
           >
             Comenzar
           </Button>
-
-          {/*progress && (
-            <Box w="50%">
-              <Heading as="h5" fontWeight="300" fontSize="sm">
-                Progreso
-              </Heading>
-              <Progress
-                color="green"
-                value={progress * 100}
-                rounded="lg"
-                mt="2"
-              />
-            </Box>
-          )*/}
         </Flex>
       </Box>
     </Box>
@@ -83,8 +63,6 @@ function CourseCard({
 
 CourseCard.propTypes = {
   image: PropTypes.string,
-  lastClass: PropTypes.number,
-  progress: PropTypes.number,
   slug: PropTypes.string,
   title: PropTypes.string,
 };

@@ -17,8 +17,11 @@ import {
   createCourse,
   getById,
   updateCollection,
+  updateBadgeAndXP,
 } from '@/lib/firebase/dataFunctions';
-import { useStore, useUserStore } from '@/lib/store';
+import { useStore, useUserStore, useProfileStore } from '@/lib/store';
+import useCookies from '@/lib/useCookies';
+import { missionsDataset } from '@/lib/gamifiedHandler';
 
 const StepLabel = ({ number, label, active }) => {
   return (
@@ -52,16 +55,21 @@ const MotionBox = motion.custom(Flex);
 
 const CreateCourseView = ({ categories }) => {
   const router = useRouter();
-  const appType = useStore((state) => state.appType);
+  const [appType, setProfileAlert] = useStore((state) => [
+    state.appType,
+    state.setProfileAlert,
+  ]);
   const [uid, createdCourses] = useUserStore((state) => [
     state.uid,
     state.user.createdCourses,
   ]);
+  const [cookieValue, setCookie] = useCookies();
   const [step, setStep] = useState(1);
   const [courseInfo, setCourseInfo] = useState({
     title: '',
     category: '',
   });
+  const setBadge = useProfileStore((state) => state.setBadge);
 
   const BoxVariants = {
     initial: {
@@ -75,6 +83,38 @@ const CreateCourseView = ({ categories }) => {
     },
   };
 
+  const handleBadge = () => {
+    const badgeToEarn = missionsDataset.find(
+      (obj) => obj.pk === 'first_created_course'
+    );
+
+    if (!cookieValue) {
+      setCookie({
+        badges: [badgeToEarn],
+      });
+
+      const { badgeId, xpAmmount } = badgeToEarn;
+      updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+        setBadge(badgeId);
+      });
+    } else {
+      const badges = cookieValue.badges || [];
+
+      if (!badges.find((obj) => obj.pk === 'first_created_course')) {
+        setCookie({
+          badges: [...badges, badgeToEarn],
+        });
+
+        const { badgeId, xpAmmount } = badgeToEarn;
+        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+          setBadge(badgeId);
+        });
+      }
+    }
+
+    setProfileAlert(true);
+  };
+
   /**
    * handleInfo
    * @param {{key: 'title' | 'category'; value: string}} Obj
@@ -84,10 +124,12 @@ const CreateCourseView = ({ categories }) => {
   };
 
   const handleSubmit = async () => {
+    handleBadge();
     const courseId = await createCourse({
       title: courseInfo.title,
       category: courseInfo.category,
       uid,
+      origin: appType,
     });
 
     await updateCollection('users', uid, {

@@ -32,7 +32,7 @@ function DemoIndex() {
         }
       }
 
-      setCourses(docsArr);
+      setCourses(docsArr.filter((o) => o.origin === appType));
     }
   }, []);
 
@@ -41,10 +41,6 @@ function DemoIndex() {
 
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    console.log(courses);
-  }, [courses]);
 
   return (
     <Flex direction="column" w="100%" py="10">
@@ -80,23 +76,37 @@ function DemoIndex() {
       <Heading fontSize="5xl" as="h2">
         Cursos disponibles
       </Heading>
-      <Grid
-        width="100%"
-        as="section"
-        gridTemplateColumns="repeat(auto-fill, 300px)"
-        mt="10"
-        gap={6}
-      >
-        {courses.map((course) => (
-          <CourseCard
-            title={course.title}
-            progress={0.5}
-            image={course.thumbnail}
-            slug={course.slug}
-            key={course.uid}
-          />
-        ))}
-      </Grid>
+      {!courses.length && (
+        <Heading
+          fontSize="2xl"
+          as="h3"
+          textAlign="center"
+          w="100%"
+          color="gray.500"
+          mt={5}
+        >
+          ¡Ups! Actualmente no hay cursos disponibles, regresa más tarde.
+        </Heading>
+      )}
+      {courses.length > 0 && (
+        <Grid
+          width="100%"
+          as="section"
+          gridTemplateColumns="repeat(auto-fill, 300px)"
+          mt="10"
+          gap={6}
+        >
+          {courses.map((course) => (
+            <CourseCard
+              title={course.title}
+              progress={0.5}
+              image={course.thumbnail}
+              slug={course.slug}
+              key={course.uid}
+            />
+          ))}
+        </Grid>
+      )}
     </Flex>
   );
 }

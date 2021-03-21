@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
+import { AnimatePresence, motion } from 'framer-motion';
+
 import {
   Avatar,
+  AvatarBadge,
   Flex,
   Menu,
   MenuButton,
@@ -32,9 +35,10 @@ const MenuItems = (username) => [
 
 const AvatarMenu = () => {
   const router = useRouter();
-  const [appType, setLoggedIn] = useStore((state) => [
+  const [appType, setLoggedIn, profileAlert] = useStore((state) => [
     state.appType,
     state.setLoggedIn,
+    state.profileAlert,
   ]);
   const [user, clearUser] = useUserStore((state) => [
     state.user,
@@ -66,11 +70,49 @@ const AvatarMenu = () => {
     router.push(`/demo/${pathType}/${href}`);
   };
 
+  const MotionBadge = motion.custom(AvatarBadge);
+
+  /**
+   * @type {import('framer-motion').Variants}
+   */
+  const BadgeVariants = {
+    hidden: {
+      scale: 0,
+      transition: {
+        type: 'spring',
+      },
+    },
+    show: {
+      scale: 1,
+      boxShadow: [
+        '0px 1px 0px 0px rgba(198,246,213,0.75)',
+        '0px 1px 0px 10px rgba(198,246,213,0.75)',
+      ],
+      transition: {
+        type: 'spring',
+        repeat: Infinity,
+      },
+    },
+  };
+
   return (
     <Menu closeOnSelect>
       <MenuButton _hover={{ bg: 'gray.200' }} p="2" rounded="25px">
         <Flex display="flex" flexDir="row" alignItems="center">
-          <Avatar size="sm" name={parseCammelCase(user.username)} />
+          <Avatar size="sm" name={parseCammelCase(user.username)}>
+            <AnimatePresence>
+              {profileAlert && (
+                <MotionBadge
+                  bg="green.500"
+                  variants={BadgeVariants}
+                  key="avatar-notification"
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
+                />
+              )}
+            </AnimatePresence>
+          </Avatar>
           <Text ml="2" fontFamily="var(--f-Chivo)">
             {user.username}
           </Text>
