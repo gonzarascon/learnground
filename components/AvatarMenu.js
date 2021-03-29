@@ -22,23 +22,26 @@ const MenuItems = (username) => [
   {
     label: 'Mi perfil',
     href: `perfil/${username}`,
+    id: 'profile',
   },
   {
     label: 'Configuración',
     href: 'perfil/configuracion',
+    id: 'config',
   },
   {
     label: 'Cerrar sesión',
     href: 'logout',
+    id: 'logout',
   },
 ];
 
 const AvatarMenu = () => {
   const router = useRouter();
-  const [appType, setLoggedIn, profileAlert] = useStore((state) => [
-    state.appType,
+  const [setLoggedIn, profileAlert, isGamified] = useStore((state) => [
     state.setLoggedIn,
     state.profileAlert,
+    state.appType === 'gamified' ? true : false,
   ]);
   const [user, clearUser] = useUserStore((state) => [
     state.user,
@@ -46,28 +49,26 @@ const AvatarMenu = () => {
   ]);
 
   useEffect(() => {
-    if (appType && user) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      router.prefetch(`/demo/${pathType}/perfil/${user.username}`);
-      router.prefetch(`/demo/${pathType}/perfil/configuracion`);
+    if (user) {
+      router.prefetch(`/demo/perfil/${user.username}`);
+      router.prefetch(`/demo/perfil/configuracion`);
     }
-  }, [appType, user]);
+  }, [user]);
 
   const handleRedirect = async (href) => {
-    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
     if (href === 'logout') {
       //TODO: handle logout
 
       await logout().then(() => {
         setLoggedIn(false);
         clearUser();
-        router.push(`/demo/${pathType}`);
+        router.push(`/demo`);
       });
 
       return;
     }
 
-    router.push(`/demo/${pathType}/${href}`);
+    router.push(`/demo/${href}`);
   };
 
   const MotionBadge = motion.custom(AvatarBadge);
@@ -120,15 +121,19 @@ const AvatarMenu = () => {
       </MenuButton>
 
       <MenuList bg="gray.200" py="5" rounded="25px">
-        {MenuItems(user.username).map((item) => (
-          <MenuItem
-            _hover={{ backgroundColor: 'gray.300' }}
-            key={item.href}
-            onClick={() => handleRedirect(item.href)}
-          >
-            {item.label}
-          </MenuItem>
-        ))}
+        {MenuItems(user.username).map((item) => {
+          if (item.id === 'config' && !isGamified) return null;
+
+          return (
+            <MenuItem
+              _hover={{ backgroundColor: 'gray.300' }}
+              key={item.href}
+              onClick={() => handleRedirect(item.href)}
+            >
+              {item.label}
+            </MenuItem>
+          );
+        })}
       </MenuList>
     </Menu>
   );

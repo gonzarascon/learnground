@@ -20,10 +20,7 @@ const LoginContainer = () => {
     email: '',
     password: '',
   });
-  const [appType, setLoggedIn] = useStore((state) => [
-    state.appType,
-    state.setLoggedIn,
-  ]);
+  const setLoggedIn = useStore((state) => state.setLoggedIn);
   const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
@@ -45,14 +42,12 @@ const LoginContainer = () => {
         })
       )
       .finally(() => {
-        const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-
         if (router.query.fromCourse === 'true' && router.query.courseSlug) {
-          router.push(`/demo/${pathType}/curso/${router.query.courseSlug}`);
+          router.push(`/demo/curso/${router.query.courseSlug}`);
           return;
         }
 
-        router.push(`/demo/${pathType}`);
+        router.push('/demo');
       });
   };
 

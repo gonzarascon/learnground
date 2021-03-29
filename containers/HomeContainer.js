@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  Flex,
-  Heading,
-  Link as ChakraLink,
-  Box,
-  Text,
-  Button,
-} from '@chakra-ui/react';
+import { Flex, Heading, Box, Text, Button } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 import { useStore } from '@/lib/store';
@@ -18,14 +11,14 @@ const MotionFlex = motion.custom(Flex);
 function HomeContainer() {
   const router = useRouter();
   const [userType, setUserType] = useState(null);
-  const { setStoreUserType, setAppType } = useStore((state) => ({
-    setStoreUserType: state.setUserType,
-    setAppType: state.setAppType,
-  }));
+  const [setStoreUserType, setAppType] = useStore((state) => [
+    state.setUserType,
+    state.setAppType,
+  ]);
 
   useEffect(() => {
     //TODO: add prefetchs for all pages
-    router.prefetch(`/demo/gamificado`);
+    router.prefetch(`/demo`);
   }, []);
 
   /**
@@ -44,7 +37,7 @@ function HomeContainer() {
 
   const handleRedirect = (version) => {
     setAppType(version === 'no-gamificado' ? 'normal' : 'gamified');
-    router.push(`/demo/${version}`);
+    router.push(`/demo`);
   };
 
   return (

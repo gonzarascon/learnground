@@ -19,7 +19,7 @@ import {
 import { DeleteIcon, AddIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { useDropzone } from 'react-dropzone';
-import { useCourseEditStore, useStore } from '@/lib/store';
+import { useCourseEditStore } from '@/lib/store';
 import { fetcher, slugify } from '@/lib/helpers';
 import { updateCollection, uploadFile } from '@/lib/firebase/dataFunctions';
 
@@ -29,7 +29,6 @@ const DescriptionView = () => {
     state.setCourseData,
   ]);
   const { data: categories } = useSWR('/api/categories/get', fetcher);
-  const appType = useStore((state) => state.appType);
   const router = useRouter();
   const [data, setData] = useState({
     image: undefined,
@@ -88,15 +87,11 @@ const DescriptionView = () => {
     };
 
     await updateCollection('courses', courseData.uid, newData).then(() => {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-
       console.log('UPDATE FINISHED');
 
       setCourseData({ data: { ...newData }, uid: courseData.uid });
 
-      router.push(
-        `/demo/${pathType}/curso/${slugify(data.title)}/editar/finalizado`
-      );
+      router.push(`/demo/curso/${slugify(data.title)}/editar/finalizado`);
     });
   };
 

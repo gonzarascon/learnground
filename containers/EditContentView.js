@@ -13,11 +13,10 @@ import { Editor } from '@/components';
 import 'highlight.js/styles/default.css';
 
 import '@/lib/highlight';
-import { useCourseEditStore, useStore } from '@/lib/store';
+import { useCourseEditStore } from '@/lib/store';
 import { updateContent } from '@/lib/firebase/dataFunctions';
 
 const EditContentView = () => {
-  const appType = useStore((state) => state.appType);
   const [contentData, courseData] = useCourseEditStore((state) => [
     state.contentData,
     state.courseData,
@@ -35,11 +34,10 @@ const EditContentView = () => {
   }, [contentData]);
 
   useEffect(() => {
-    if (appType && courseData) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      router.prefetch(`/demo/${pathType}/curso/${courseData.data.slug}/editar`);
+    if (courseData) {
+      router.prefetch(`/demo/curso/${courseData.data.slug}/editar`);
     }
-  }, [courseData, appType]);
+  }, [courseData]);
 
   const handleSave = async () => {
     const data = {
@@ -51,8 +49,7 @@ const EditContentView = () => {
       contentUid: contentData.uid,
       data,
     }).then(() => {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      router.push(`/demo/${pathType}/curso/${courseData.data.slug}/editar`);
+      router.push(`/demo/curso/${courseData.data.slug}/editar`);
     });
   };
 

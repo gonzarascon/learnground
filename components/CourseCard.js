@@ -3,21 +3,16 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
 import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
-import { useStore } from '@/lib/store';
 
 function CourseCard({ title = '', slug = '', image = '' }) {
   const [coursePath, setCoursePath] = useState('');
-  const appType = useStore((state) => state.appType);
   const router = useRouter();
 
   useEffect(() => {
-    if (appType) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      const path = `/demo/${pathType}/curso/${slug}`;
-      setCoursePath(path);
-      router.prefetch(path);
-    }
-  }, [appType]);
+    const path = `/demo/curso/${slug}`;
+    setCoursePath(path);
+    router.prefetch(path);
+  }, []);
 
   const handleButtonClick = () => {
     router.push(coursePath);

@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react';
-import Link from 'next/link';
-import { useStore } from '@/lib/store';
+import React from 'react';
 
 import { HomeContainer } from '@/containers';
 import { Layout } from '@/components';

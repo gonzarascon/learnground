@@ -41,8 +41,7 @@ const CourseIntro = () => {
     state.courseData,
     state.courseId,
   ]);
-  const [appType, loggedIn, setProfileAlert] = useStore((state) => [
-    state.appType,
+  const [loggedIn, setProfileAlert] = useStore((state) => [
     state.loggedIn,
     state.setProfileAlert,
   ]);
@@ -71,11 +70,8 @@ const CourseIntro = () => {
 
   useEffect(() => {
     if (courseData) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
       if (loggedIn) {
-        router.prefetch(
-          `/demo/${pathType}/curso/${courseData.slug}/clase/${toClass}`
-        );
+        router.prefetch(`/demo/curso/${courseData.slug}/clase/${toClass}`);
       } else {
         router.prefetch(`/auth/iniciar-sesion`);
       }
@@ -130,12 +126,9 @@ const CourseIntro = () => {
   }, [courseData, uid]);
 
   const handleClickStart = async () => {
-    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
     if (loggedIn) {
       await subscribeUser();
-      router.push(
-        `/demo/${pathType}/curso/${courseData.slug}/clase/${toClass}`
-      );
+      router.push(`/demo/curso/${courseData.slug}/clase/${toClass}`);
     } else {
       router.push({
         pathname: `/auth/iniciar-sesion`,
@@ -146,8 +139,7 @@ const CourseIntro = () => {
 
   const handleClickEdit = () => {
     if (courseData.creatorId === uid) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      router.push(`/demo/${pathType}/curso/${courseData.slug}/editar`);
+      router.push(`/demo/curso/${courseData.slug}/editar`);
     }
   };
 

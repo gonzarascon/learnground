@@ -11,9 +11,10 @@ import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
 function GamificadoProfile({ profileData, profileID }) {
   const [uid] = useUserStore((state) => [state.uid]);
 
-  const [profileAlert, setProfileAlert] = useStore((state) => [
+  const [profileAlert, setProfileAlert, gamifiedApp] = useStore((state) => [
     state.profileAlert,
     state.setProfileAlert,
+    state.appType === 'gamified' ? true : false,
   ]);
   const [cookieValue, setCookie, isLoading] = useCookies();
   const [
@@ -27,42 +28,46 @@ function GamificadoProfile({ profileData, profileID }) {
   ]);
 
   useEffect(() => {
-    const badgeToEarn = missionsDataset.find(
-      (obj) => obj.pk === 'first_view_profile'
-    );
+    if (gamifiedApp) {
+      const badgeToEarn = missionsDataset.find(
+        (obj) => obj.pk === 'first_view_profile'
+      );
 
-    if (!isLoading && badgeToEarn) {
-      if (!cookieValue) {
-        setCookie({
-          badges: [badgeToEarn],
-        });
-
-        const { badgeId, xpAmmount } = badgeToEarn;
-        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
-          setBadge(badgeId);
-        });
-      } else {
-        const badges = cookieValue.badges || [];
-
-        if (!badges.find((obj) => obj.pk === 'first_view_profile')) {
+      if (!isLoading && badgeToEarn) {
+        if (!cookieValue) {
           setCookie({
-            badges: [...badges, badgeToEarn],
+            badges: [badgeToEarn],
           });
 
           const { badgeId, xpAmmount } = badgeToEarn;
           updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
             setBadge(badgeId);
           });
+        } else {
+          const badges = cookieValue.badges || [];
+
+          if (!badges.find((obj) => obj.pk === 'first_view_profile')) {
+            setCookie({
+              badges: [...badges, badgeToEarn],
+            });
+
+            const { badgeId, xpAmmount } = badgeToEarn;
+            updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+              setBadge(badgeId);
+            });
+          }
         }
       }
     }
-  }, [isLoading]);
+  }, [isLoading, gamifiedApp]);
 
   useEffect(() => {
-    if (profileAlert) {
-      setProfileAlert(false);
+    if (gamifiedApp) {
+      if (profileAlert) {
+        setProfileAlert(false);
+      }
     }
-  }, [profileAlert]);
+  }, [profileAlert, gamifiedApp]);
 
   useEffect(() => {
     setProfileData(profileData);

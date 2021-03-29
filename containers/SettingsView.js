@@ -17,11 +17,11 @@ import { fetcher, parseCammelCase } from '@/lib/helpers';
 
 function SettingsView() {
   const [user] = useUserStore((state) => [state.user]);
-  const { data: titlesData, error: titlesError } = useSWR(
+  const { data: titlesData } = useSWR(
     user.titles && `/api/titles/get?titles=${JSON.stringify(user.titles)}`,
     fetcher
   );
-  const { data: pinsData, error: pinsError } = useSWR(
+  const { data: pinsData } = useSWR(
     user.pins && `/api/pins/get?pins=${JSON.stringify(user.pins)}`,
     fetcher
   );

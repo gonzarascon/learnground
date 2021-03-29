@@ -40,12 +40,10 @@ const ClassList = () => {
               p="2"
               rounded="md"
               mb="2"
-              title="Clase 1: Configuracion del entorno"
+              title={`${content.order} ${content.title}`}
               bg={isActive ? 'blue.400' : 'blue.100'}
               color={isActive && 'white'}
             >
-              {/* color="green.300" if not active */}
-
               <Text fontSize="2xl" fontWeight="bold" mr={2}>
                 {content.order}
               </Text>

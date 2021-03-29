@@ -15,11 +15,7 @@ function DemoIndex() {
   ]);
 
   const handleCreateCourseRedirect = () => {
-    const URL = `/demo/${
-      appType === 'gamified' ? 'gamificado' : 'no-gamificado'
-    }/curso/crear`;
-
-    router.push(URL);
+    router.push('/demo/curso/crear');
   };
 
   const fetchData = useCallback(async (snapshot) => {

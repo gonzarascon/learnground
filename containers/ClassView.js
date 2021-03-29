@@ -10,6 +10,8 @@ function ClassView({ source = '' }) {
   const router = useRouter();
   const appType = useStore((state) => state.appType);
 
+  //TODO: handle layout change based on appType
+
   return (
     <Grid
       templateColumns="70% 1fr"

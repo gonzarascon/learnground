@@ -138,9 +138,8 @@ const CreateCourseView = ({ categories }) => {
 
     await getById('courses', courseId).then((response) => {
       if (response.data()) {
-        const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
         const slug = response.data().slug;
-        router.push(`/demo/${pathType}/curso/${slug}/editar`);
+        router.push(`/demo/curso/${slug}/editar`);
       }
     });
   };

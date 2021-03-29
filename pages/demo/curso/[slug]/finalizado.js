@@ -36,37 +36,39 @@ function GamificadoCourse() {
   const courseData = useCourseStore((state) => state.courseData);
 
   useEffect(() => {
-    const badgeToEarn = missionsDataset.find(
-      (obj) => obj.pk === 'first_view_profile'
-    );
+    if (appType === 'gamified') {
+      const badgeToEarn = missionsDataset.find(
+        (obj) => obj.pk === 'first_view_profile'
+      );
 
-    if (!isLoading && badgeToEarn) {
-      if (!cookieValue) {
-        setCookie({
-          badges: [badgeToEarn],
-        });
-
-        const { badgeId, xpAmmount } = badgeToEarn;
-        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
-          setBadge(badgeId);
-        });
-      } else {
-        const badges = cookieValue.badges || [];
-
-        if (!badges.find((obj) => obj.pk === 'first_view_profile')) {
+      if (!isLoading && badgeToEarn) {
+        if (!cookieValue) {
           setCookie({
-            badges: [...badges, badgeToEarn],
+            badges: [badgeToEarn],
           });
 
           const { badgeId, xpAmmount } = badgeToEarn;
           updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
             setBadge(badgeId);
           });
+        } else {
+          const badges = cookieValue.badges || [];
+
+          if (!badges.find((obj) => obj.pk === 'first_view_profile')) {
+            setCookie({
+              badges: [...badges, badgeToEarn],
+            });
+
+            const { badgeId, xpAmmount } = badgeToEarn;
+            updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+              setBadge(badgeId);
+            });
+          }
         }
+        setProfileAlert(true);
       }
-      setProfileAlert(true);
     }
-  }, [isLoading]);
+  }, [isLoading, appType]);
 
   useEffect(() => {
     if (courseData) {
@@ -75,18 +77,11 @@ function GamificadoCourse() {
   }, [courseData]);
 
   useEffect(() => {
-    if (appType) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      const path = `/demo/${pathType}`;
-      router.prefetch(path);
-    }
-  }, [appType]);
+    router.prefetch('/demo');
+  }, []);
 
   const handleClickCourse = () => {
-    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-    const path = `/demo/${pathType}`;
-
-    router.push(path);
+    router.push('/demo');
   };
 
   /**
@@ -94,10 +89,7 @@ function GamificadoCourse() {
    * @param {"wp" | "tw" | "link"} provider
    */
   const handleClickShare = (provider) => {
-    const baseURL =
-      process.env.NODE_ENV === 'production'
-        ? 'learnground.com'
-        : 'localhost:3000';
+    const baseURL = window.location;
     const path = router.asPath.replace('/finalizado', '');
     const url = `https://${baseURL}${path}`;
     Share('¡Encontré este curso en learnground.com, mirá!', url, provider);
