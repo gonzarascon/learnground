@@ -51,6 +51,7 @@ const LoginContainer = () => {
         align="center"
         m="0 auto"
         p={5}
+        bg="white"
       >
         <Heading as="h3">Regístrate</Heading>
 

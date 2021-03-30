@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Grid, Heading, Skeleton, Text } from '@chakra-ui/react';
 import { UserInformation, UserMedals } from '@/components/Profile';
 import { CourseCard } from '@/components';
-import { useProfileStore } from '@/lib/store';
+import { useProfileStore, useStore } from '@/lib/store';
 import { getById } from '@/lib/firebase/dataFunctions';
 
 const ProfileView = () => {
+  const isGamified = useStore((state) =>
+    state.appType === 'gamified' ? true : false
+  );
   const [profileData, visitorIsOwner] = useProfileStore((state) => [
     state.profileData,
     state.visitorIsOwner,
@@ -49,7 +52,7 @@ const ProfileView = () => {
       rounded="md"
     >
       <UserInformation />
-      <UserMedals />
+      {isGamified && <UserMedals />}
       {profileData && (
         <>
           <Box gridArea="taken">

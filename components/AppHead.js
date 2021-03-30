@@ -9,7 +9,9 @@ const AppHead = () => {
         rel="stylesheet"
       />
       <Head>
-        <title>My site</title>
+        <title>
+          Learnground - La gamificación aplicada a plataformas de E-Learning
+        </title>
       </Head>
     </>
   );

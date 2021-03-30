@@ -39,7 +39,7 @@ function DemoIndex() {
   }, []);
 
   return (
-    <Flex direction="column" w="100%" py="10">
+    <Flex direction="column" w="100%" p="10" h="100%">
       {userType === 'instructor' && (
         <Flex
           justify="space-between"
@@ -80,6 +80,13 @@ function DemoIndex() {
           w="100%"
           color="gray.500"
           mt={5}
+          bg="blue.100"
+          maxW="720px"
+          boxShadow="base"
+          rounded="md"
+          alignSelf="center"
+          px="10"
+          py="5"
         >
           ¡Ups! Actualmente no hay cursos disponibles, regresa más tarde.
         </Heading>

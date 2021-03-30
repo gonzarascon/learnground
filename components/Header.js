@@ -14,7 +14,10 @@ import { useCourseStore, useStore, useUserStore } from '@/lib/store';
 
 const Header = ({ version, isCourse }) => {
   const [progress, setProgress] = useState();
-  const loggedIn = useStore((state) => state.loggedIn);
+  const [loggedIn, isGamified] = useStore((state) => [
+    state.loggedIn,
+    state.appType === 'gamified' ? true : false,
+  ]);
   const uid = useUserStore((state) => state.uid);
   const courseData = useCourseStore((state) => state.courseData);
 
@@ -67,7 +70,9 @@ const Header = ({ version, isCourse }) => {
       width="100%"
     >
       <Heading as="h1" size={processVersion('xl', 'md')}>
-        Learnground
+        <Link href="/demo">
+          <a>Learnground</a>
+        </Link>
       </Heading>
 
       {version === 'demo' && (
@@ -86,7 +91,7 @@ const Header = ({ version, isCourse }) => {
             justify="flex-end"
             gridColumn={isCourse ? 'auto' : '3/4'}
           >
-            {isCourse && courseData && renderProgress()}
+            {isCourse && courseData && isGamified && renderProgress()}
 
             {version === 'demo' && loggedIn && <AvatarMenu />}
             {version === 'demo' && !loggedIn && (
