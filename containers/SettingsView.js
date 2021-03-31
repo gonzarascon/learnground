@@ -50,7 +50,17 @@ function SettingsView() {
   }, [pinsData]);
 
   return (
-    <Box position="relative" maxW="720px" m="0 auto" as="section">
+    <Box
+      position="relative"
+      maxW="720px"
+      mx="auto"
+      my="10"
+      px="10"
+      py="5"
+      as="section"
+      bg="white"
+      rounded="lg"
+    >
       <Box
         as="header"
         borderBottom="2px solid"

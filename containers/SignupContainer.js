@@ -8,12 +8,14 @@ import {
   FormLabel,
   Heading,
   Input,
+  useToast,
 } from '@chakra-ui/react';
 import { signUp } from '@/lib/firebase/dataFunctions';
 import { useStore } from '@/lib/store';
 
 const LoginContainer = () => {
   const router = useRouter();
+  const toast = useToast();
   const [signupData, setSignupnData] = useState({
     email: '',
     username: '',
@@ -37,8 +39,16 @@ const LoginContainer = () => {
       password: signupData.password,
       userType,
     })
-      .then(() => router.push('/auth/iniciar-sesion'))
-      .catch((error) => console.log('error :(', error));
+      .then(() => router.push('/demo'))
+      .catch(() =>
+        toast({
+          duration: 5000,
+          status: 'error',
+          position: 'top',
+          title: 'Ocurrió un error.',
+          description: 'Por favor, inténtalo nuevamente.',
+        })
+      );
   };
 
   return (

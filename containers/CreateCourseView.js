@@ -146,7 +146,15 @@ const CreateCourseView = ({ categories }) => {
 
   return (
     <Flex direction="column" align="center" w="100%">
-      <Box w="100%" maxW="600px" py="5">
+      <Box
+        w="100%"
+        maxW="600px"
+        py="5"
+        bg="white"
+        rounded="lg"
+        shadow="base"
+        my="5"
+      >
         <Heading as="h4" fontSize="lg" color="gray.400" textAlign="center">
           Crear un nuevo curso
         </Heading>
@@ -178,6 +186,11 @@ const CreateCourseView = ({ categories }) => {
               onChange={(e) =>
                 handleInfo({ key: 'title', value: e.target.value })
               }
+              bg="white"
+              py="2"
+              px="5"
+              rounded="lg"
+              shadow="base"
             />
 
             <Button

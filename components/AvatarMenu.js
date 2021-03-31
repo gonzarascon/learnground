@@ -92,6 +92,8 @@ const AvatarMenu = () => {
       transition: {
         type: 'spring',
         repeat: Infinity,
+        duration: 1,
+        repeatDelay: 0.5,
       },
     },
   };

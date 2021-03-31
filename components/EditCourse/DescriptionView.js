@@ -128,8 +128,6 @@ const DescriptionView = () => {
     [data]
   );
 
-  /* TODO: bring data from db */
-
   return (
     <Flex
       pt="5"
@@ -188,7 +186,7 @@ const DescriptionView = () => {
           </FormControl>
           <Image
             src={data.image?.preview}
-            fallbackSrc="https://via.placeholder.com/641x370"
+            fallbackSrc="/images/course_placeholder.png"
             w="100%"
             rounded="lg"
             mt="3"

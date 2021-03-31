@@ -7,12 +7,14 @@ import {
   Heading,
   Progress,
   Text,
+  Icon,
 } from '@chakra-ui/react';
 import { useStore, useProfileStore, useUserStore } from '@/lib/store';
 import { parseCammelCase } from '@/lib/helpers';
 import { missionsDataset, parseXPToLevel } from '@/lib/gamifiedHandler';
 import useCookies from '@/lib/useCookies';
 import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
+import { CurrencyDollarIcon } from '@heroicons/react/solid';
 
 const UserInformation = () => {
   const uid = useUserStore((state) => state.uid);
@@ -20,7 +22,11 @@ const UserInformation = () => {
     state.setShopOpen,
     state.appType === 'gamified' ? true : false,
   ]);
-  const [userLevel, setUserLevel] = useState(null);
+  const [userLevel, setUserLevel] = useState({
+    minAmmount: 0,
+    maxAmmount: 100,
+    number: 0,
+  });
   const [profileData, visitorIsOwner, setBadge] = useProfileStore((state) => [
     state.profileData,
     state.visitorIsOwner,
@@ -93,7 +99,7 @@ const UserInformation = () => {
           </Box>
         </Flex>
       )}
-      {userLevel && isGamified && (
+      {isGamified && (
         <Flex wrap="nowrap" align="center" mt="10">
           <Flex direction="column" align="center" mr="5" color="gray.700">
             <Text fontSize="sm" textAlign="center">
@@ -116,7 +122,13 @@ const UserInformation = () => {
       {profileData && visitorIsOwner && isGamified && (
         <Flex wrap="nowrap" align="center" mt="10" justify="space-between">
           <Flex align="center" wrap="nowrap">
-            <Box bg="green.200" h="30px" w="30px" rounded="100%" mr="5"></Box>
+            <Icon
+              as={CurrencyDollarIcon}
+              color="green.200"
+              w="30px"
+              h="30px"
+              mr="5"
+            />
             <Text fontSize="xl">{profileData.money}</Text>
           </Flex>
           <Button colorScheme="purple" onClick={handleStoreOpen}>

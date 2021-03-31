@@ -9,9 +9,10 @@ import { useRealtime } from '@/lib/firebase/dataFunctions';
 function DemoIndex() {
   const router = useRouter();
   const [courses, setCourses] = useState([]);
-  const [appType, userType] = useStore((state) => [
+  const [appType, userType, loggedIn] = useStore((state) => [
     state.appType,
     state.userType,
+    state.loggedIn,
   ]);
 
   const handleCreateCourseRedirect = () => {
@@ -40,7 +41,7 @@ function DemoIndex() {
 
   return (
     <Flex direction="column" w="100%" p="10" h="100%">
-      {userType === 'instructor' && (
+      {userType === 'instructor' && loggedIn && (
         <Flex
           justify="space-between"
           bg="gray.100"

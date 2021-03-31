@@ -54,7 +54,7 @@ const EditContentView = () => {
   };
 
   return (
-    <Box p="5" rounded="md" bg="white" mt="5">
+    <Box p="5" rounded="md" bg="white" mt="5" mx="10">
       <Flex justify="space-between" align="center" wrap="nowrap">
         <FormControl maxW="400px">
           <FormLabel fontFamily="Chivo" fontSize="lg" fontWeight="600">

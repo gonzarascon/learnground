@@ -77,7 +77,6 @@ const Header = ({ version, isCourse }) => {
 
       {version === 'demo' && (
         <>
-          {/* TODO: Conditional rendering for this heading */}
           {isCourse && (
             <Heading as="h2" size="sm" maxWidth="500px" isTruncated>
               {courseData && courseData.title
