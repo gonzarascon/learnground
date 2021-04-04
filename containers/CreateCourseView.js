@@ -18,10 +18,12 @@ import {
   getById,
   updateCollection,
   updateBadgeAndXP,
+  registerEvent,
 } from '@/lib/firebase/dataFunctions';
 import { useStore, useUserStore, useProfileStore } from '@/lib/store';
 import useCookies from '@/lib/useCookies';
 import { missionsDataset } from '@/lib/gamifiedHandler';
+import { EventsEnum } from '@/lib/events';
 
 const StepLabel = ({ number, label, active }) => {
   return (
@@ -129,6 +131,11 @@ const CreateCourseView = ({ categories }) => {
       title: courseInfo.title,
       category: courseInfo.category,
       uid,
+      origin: appType,
+    });
+
+    registerEvent(EventsEnum.CREATE_COURSE, {
+      [EventsEnum.CREATE_COURSE]: courseInfo.title,
       origin: appType,
     });
 

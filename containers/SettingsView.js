@@ -14,9 +14,14 @@ import {
 import Select from 'react-select';
 import { useUserStore } from '@/lib/store';
 import { fetcher, parseCammelCase } from '@/lib/helpers';
+import { registerEvent } from '@/lib/firebase/dataFunctions';
+import { EventsEnum } from '@/lib/events';
 
 function SettingsView() {
-  const [user] = useUserStore((state) => [state.user]);
+  const [user, setUser] = useUserStore((state) => [
+    state.user,
+    state.setUserOnly,
+  ]);
   const { data: titlesData } = useSWR(
     user.titles && `/api/titles/get?titles=${JSON.stringify(user.titles)}`,
     fetcher
@@ -48,6 +53,35 @@ function SettingsView() {
       setSettingsData({ ...setSettingsData, pins: pinsData.pins });
     }
   }, [pinsData]);
+
+  const changeSelected = (arr, selected) => {
+    const arrCopy = arr;
+    const prevSelected = arrCopy.findIndex((o) => o.selected);
+    const newSelected = arrCopy.findIndex((o) => o.id === selected.id);
+
+    if (prevSelected) {
+      arrCopy[prevSelected].selected = false;
+    }
+
+    if (newSelected) {
+      arrCopy[newSelected].selected === true;
+    }
+
+    return arrCopy;
+  };
+
+  const handleChange = (obj, from) => {
+    const isTitle = from === 'title';
+    const properArr = isTitle ? user.titles : user.pins;
+
+    const newArr = changeSelected(properArr, obj);
+
+    setUser({ ...user, [isTitle ? 'titles' : 'pins']: newArr });
+
+    registerEvent(isTitle ? EventsEnum.CHANGE_TITLE : EventsEnum.SET_PIN, {
+      [isTitle ? EventsEnum.CHANGE_TITLE : EventsEnum.SET_PIN]: obj,
+    });
+  };
 
   return (
     <Box
@@ -109,6 +143,8 @@ function SettingsView() {
                 noOptionsMessage={() =>
                   '¡Aún no has desbloqueado títulos! Continua aprendiendo para ganar 😊'
                 }
+                defaultValue={user && user.titles.find((o) => o.selected)}
+                onChange={(obj) => handleChange(obj, 'title')}
               />
             </Box>
           </Flex>
@@ -123,6 +159,8 @@ function SettingsView() {
                 noOptionsMessage={() =>
                   '¡Aún no has desbloqueado insignias! Continua aprendiendo para ganar 😊'
                 }
+                defaultValue={user && user.pins.find((o) => o.selected)}
+                onChange={(obj) => handleChange(obj, 'pins')}
               />
             </Box>
           </Flex>

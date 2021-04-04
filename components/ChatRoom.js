@@ -14,7 +14,12 @@ import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
 
 import { ChatMessage } from '@/components';
 import { useContentStore, useUserStore } from '@/lib/store';
-import { sendMessageToChat, useChatRoom } from '@/lib/firebase/dataFunctions';
+import {
+  registerEvent,
+  sendMessageToChat,
+  useChatRoom,
+} from '@/lib/firebase/dataFunctions';
+import { EventsEnum } from '@/lib/events';
 
 const ChatRoom = () => {
   const [chatMessages, setChatMessages] = useState([]);
@@ -69,6 +74,9 @@ const ChatRoom = () => {
         text: inputMessage,
         user: { uid, username },
       },
+    });
+    registerEvent(EventsEnum.SEND_MESSAGE, {
+      [EventsEnum.SEND_MESSAGE]: inputMessage,
     });
     setInputMessage('');
   };
