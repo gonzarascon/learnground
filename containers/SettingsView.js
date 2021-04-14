@@ -143,7 +143,7 @@ function SettingsView() {
                 noOptionsMessage={() =>
                   '¡Aún no has desbloqueado títulos! Continua aprendiendo para ganar 😊'
                 }
-                defaultValue={user && user.titles.find((o) => o.selected)}
+                defaultValue={user && user.titles?.find((o) => o.selected)}
                 onChange={(obj) => handleChange(obj, 'title')}
               />
             </Box>
@@ -159,7 +159,7 @@ function SettingsView() {
                 noOptionsMessage={() =>
                   '¡Aún no has desbloqueado insignias! Continua aprendiendo para ganar 😊'
                 }
-                defaultValue={user && user.pins.find((o) => o.selected)}
+                defaultValue={user && user.pins?.find((o) => o.selected)}
                 onChange={(obj) => handleChange(obj, 'pins')}
               />
             </Box>

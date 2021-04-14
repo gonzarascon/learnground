@@ -111,9 +111,9 @@ const UserInformation = () => {
           <Progress
             colorScheme="green"
             height="35px"
-            value={profileData.xp ? profileData.xp : 0}
-            min={userLevel.minAmmount ? userLevel.minAmmount : 0}
-            max={userLevel.maxAmmount ? userLevel.maxAmmount : 100}
+            value={profileData?.xp ? profileData.xp : 0}
+            min={userLevel?.minAmmount ? userLevel.minAmmount : 0}
+            max={userLevel?.maxAmmount ? userLevel.maxAmmount : 100}
             w="100%"
             rounded="2xl"
           />
