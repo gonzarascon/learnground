@@ -9,15 +9,22 @@ import {
   Text,
   Icon,
 } from '@chakra-ui/react';
-import { useStore, useProfileStore, useUserStore } from '@/lib/store';
+import {
+  useStore,
+  useProfileStore,
+  useUserStore,
+  useItemsStore,
+} from '@/lib/store';
 import { parseCammelCase } from '@/lib/helpers';
 import { missionsDataset, parseXPToLevel } from '@/lib/gamifiedHandler';
 import useCookies from '@/lib/useCookies';
-import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
-import { CurrencyDollarIcon } from '@heroicons/react/solid';
+import { registerEvent, updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
+import { CurrencyDollarIcon, AcademicCapIcon } from '@heroicons/react/solid';
+import { EventsEnum } from '@/lib/events';
 
 const UserInformation = () => {
   const uid = useUserStore((state) => state.uid);
+  const availableMoney = useItemsStore((state) => state.availableMoney);
   const [setShopOpen, isGamified] = useStore((state) => [
     state.setShopOpen,
     state.appType === 'gamified' ? true : false,
@@ -27,10 +34,16 @@ const UserInformation = () => {
     maxAmmount: 100,
     number: 0,
   });
-  const [profileData, visitorIsOwner, setBadge] = useProfileStore((state) => [
+  const [
+    profileData,
+    visitorIsOwner,
+    setBadge,
+    selectedColor,
+  ] = useProfileStore((state) => [
     state.profileData,
     state.visitorIsOwner,
     state.setBadge,
+    state.selectedColor,
   ]);
   const [cookieValue, setCookie] = useCookies();
 
@@ -38,6 +51,10 @@ const UserInformation = () => {
     const badgeToEarn = missionsDataset.find(
       (obj) => obj.pk === 'first_view_store'
     );
+
+    registerEvent(EventsEnum.OPEN_SHOP, {
+      [EventsEnum.OPEN_SHOP]: profileData?.username,
+    });
 
     if (!cookieValue) {
       setCookie({
@@ -72,30 +89,40 @@ const UserInformation = () => {
     }
   }, [isGamified]);
 
+  console.log(selectedColor);
+
   return (
     <Box gridArea="info" maxW="441px">
       {profileData && (
         <Flex wrap="nowrap" align="center">
           <Avatar
-            name={profileData.username && parseCammelCase(profileData.username)}
+            name={
+              profileData?.username && parseCammelCase(profileData.username)
+            }
             size="xl"
           />
           <Box ml="5">
-            <Heading as="h3">{profileData.username}</Heading>
-            {isGamified && (
-              <Flex wrap="nowrap" align="center">
-                {profileData.pins && (
-                  <Box
-                    bg="green.200"
-                    rounded="md"
-                    mr="3"
-                    w="15px"
-                    h="15px"
-                  ></Box>
-                )}
-                {profileData.titles && <Text>Cazador de conocimiento</Text>}
-              </Flex>
-            )}
+            <Heading
+              as="h3"
+              color={selectedColor ? selectedColor.color : 'black'}
+            >
+              {profileData?.username}
+            </Heading>
+            {isGamified &&
+              profileData?.titles &&
+              profileData.titles.find((t) => t.selected) && (
+                <Flex wrap="nowrap" align="center">
+                  <Icon
+                    as={AcademicCapIcon}
+                    color="green.200"
+                    w="30px"
+                    h="30px"
+                    mr="5"
+                  />
+
+                  <Text>{profileData.titles.find((t) => t.selected).name}</Text>
+                </Flex>
+              )}
           </Box>
         </Flex>
       )}
@@ -105,7 +132,7 @@ const UserInformation = () => {
             <Text fontSize="sm" textAlign="center">
               NIVEL
             </Text>
-            <Heading>{userLevel.number}</Heading>
+            <Heading>{userLevel?.number}</Heading>
           </Flex>
 
           <Progress
@@ -129,7 +156,7 @@ const UserInformation = () => {
               h="30px"
               mr="5"
             />
-            <Text fontSize="xl">{profileData.money}</Text>
+            <Text fontSize="xl">{availableMoney}</Text>
           </Flex>
           <Button colorScheme="purple" onClick={handleStoreOpen}>
             Visitar tienda

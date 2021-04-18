@@ -26,11 +26,13 @@ import {
 import { fetcher } from '@/lib/helpers';
 import ActionButton from '@/components';
 import {
+  registerEvent,
   subscribeUserToCourse,
   updateBadgeAndXP,
 } from '@/lib/firebase/dataFunctions';
 import { missionsDataset } from '@/lib/gamifiedHandler';
 import useCookies from '@/lib/useCookies';
+import { EventsEnum } from '@/lib/events';
 
 const CourseIntro = () => {
   const router = useRouter();
@@ -118,6 +120,9 @@ const CourseIntro = () => {
 
     if (!checkSubscribed) {
       handleBadge();
+      registerEvent(EventsEnum.SUBSCRIBE_USER, {
+        [EventsEnum.SUBSCRIBE_USER]: uid,
+      });
       await subscribeUserToCourse({ courseUid: courseId, userUid: uid });
       return;
     } else {

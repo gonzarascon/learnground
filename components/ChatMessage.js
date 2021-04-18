@@ -13,6 +13,7 @@ const ChatMessage = ({
   username,
   message,
   createdAt,
+  usernameColor = 'black',
 }) => {
   return (
     <MotionBox
@@ -29,13 +30,10 @@ const ChatMessage = ({
       className="chatMessage"
     >
       <Flex direction="row" wrap="nowrap" align="center" mb="2">
-        {/**
-         * TODO: Add badge logic
-         */}
         {hasBadge && (
           <Box w="15px" h="15px" bg="teal.300" rounded="md" mr="3"></Box>
         )}
-        <Heading as="h4" size="md">
+        <Heading as="h4" size="md" color={usernameColor}>
           {username}
         </Heading>
       </Flex>
@@ -56,6 +54,7 @@ ChatMessage.propTypes = {
   username: PropTypes.string,
   message: PropTypes.string,
   createdAt: PropTypes.string,
+  usernameColor: PropTypes.string,
 };
 
 export default ChatMessage;

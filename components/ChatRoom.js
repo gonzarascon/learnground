@@ -13,7 +13,7 @@ import { ChevronRightIcon } from '@chakra-ui/icons';
 import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
 
 import { ChatMessage } from '@/components';
-import { useContentStore, useUserStore } from '@/lib/store';
+import { useContentStore, useProfileStore, useUserStore } from '@/lib/store';
 import {
   registerEvent,
   sendMessageToChat,
@@ -26,6 +26,7 @@ const ChatRoom = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isRepliying, setIsRepliying] = useState(null);
   const messagesContainer = useRef(null);
+  const selectedColor = useProfileStore((state) => state.selectedColor);
   const chatId = useContentStore((state) => state.chatId);
   const [uid, username] = useUserStore((state) => [
     state.uid,
@@ -111,14 +112,18 @@ const ChatRoom = () => {
           {chatMessages.length > 0 && (
             <AnimateSharedLayout>
               {chatMessages.map((message) => {
+                const isOwned = message.user.uid === uid;
                 return (
                   <ChatMessage
-                    owned={message.user.uid === uid}
+                    owned={isOwned}
                     key={message.text}
                     id={`messages_${message.uid}`}
                     message={message.text}
                     createdAt={message.createdAt}
                     username={message.user.username}
+                    usernameColor={
+                      isOwned && selectedColor ? selectedColor : 'black'
+                    }
                   />
                 );
               })}

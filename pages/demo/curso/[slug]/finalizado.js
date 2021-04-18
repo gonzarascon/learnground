@@ -19,8 +19,9 @@ import { Twitter, Whatsapp } from '@/components/icons';
 import { useRouter } from 'next/router';
 import { Share } from '@/lib/share';
 import { missionsDataset } from '@/lib/gamifiedHandler';
-import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
+import { registerEvent, updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
 import useCookies from '@/lib/useCookies';
+import { EventsEnum } from '@/lib/events';
 
 function GamificadoCourse() {
   const router = useRouter();
@@ -81,6 +82,9 @@ function GamificadoCourse() {
   }, []);
 
   const handleClickCourse = () => {
+    registerEvent(EventsEnum.FINISH_COURSE, {
+      [EventsEnum.FINISH_COURSE]: courseData?.title,
+    });
     router.push('/demo');
   };
 

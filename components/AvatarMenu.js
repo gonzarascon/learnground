@@ -16,7 +16,8 @@ import {
 
 import { useStore, useUserStore } from '@/lib/store';
 import { parseCammelCase } from '@/lib/helpers';
-import { logout } from '@/lib/firebase/dataFunctions';
+import { logout, registerEvent } from '@/lib/firebase/dataFunctions';
+import { EventsEnum } from '@/lib/events';
 
 const MenuItems = (username) => [
   {
@@ -55,7 +56,7 @@ const AvatarMenu = () => {
     }
   }, [user]);
 
-  const handleRedirect = async (href) => {
+  const handleRedirect = async (href, id) => {
     if (href === 'logout') {
       //TODO: handle logout
 
@@ -68,6 +69,10 @@ const AvatarMenu = () => {
       return;
     }
 
+    if (id === 'config')
+      registerEvent(EventsEnum.OPEN_SETTINGS, {
+        [EventsEnum.OPEN_SETTINGS]: router.pathname,
+      });
     router.push(`/demo/${href}`);
   };
 
@@ -130,7 +135,7 @@ const AvatarMenu = () => {
             <MenuItem
               _hover={{ backgroundColor: 'gray.300' }}
               key={item.href}
-              onClick={() => handleRedirect(item.href)}
+              onClick={() => handleRedirect(item.href, item.id)}
             >
               {item.label}
             </MenuItem>

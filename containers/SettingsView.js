@@ -12,12 +12,20 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { useUserStore } from '@/lib/store';
+import { useItemsStore, useProfileStore, useUserStore } from '@/lib/store';
 import { fetcher, parseCammelCase } from '@/lib/helpers';
 import { registerEvent } from '@/lib/firebase/dataFunctions';
 import { EventsEnum } from '@/lib/events';
+import { useRouter } from 'next/router';
 
 function SettingsView() {
+  const router = useRouter();
+  const purchasedItems = useItemsStore((state) => state.purchasedItems);
+  const [selectedColor, setSelectedColor] = useProfileStore((state) => [
+    state.selectedColor,
+    state.setSelectedColor,
+  ]);
+
   const [user, setUser] = useUserStore((state) => [
     state.user,
     state.setUserOnly,
@@ -72,15 +80,26 @@ function SettingsView() {
 
   const handleChange = (obj, from) => {
     const isTitle = from === 'title';
-    const properArr = isTitle ? user.titles : user.pins;
+    if (isTitle) {
+      const properArr = isTitle ? user.titles : user.pins;
 
-    const newArr = changeSelected(properArr, obj);
+      const newArr = changeSelected(properArr, obj);
 
-    setUser({ ...user, [isTitle ? 'titles' : 'pins']: newArr });
+      setUser({ ...user, titles: newArr });
+    } else {
+      setSelectedColor(obj);
+    }
 
     registerEvent(isTitle ? EventsEnum.CHANGE_TITLE : EventsEnum.SET_PIN, {
       [isTitle ? EventsEnum.CHANGE_TITLE : EventsEnum.SET_PIN]: obj,
     });
+  };
+
+  const handleReditect = () => {
+    registerEvent(EventsEnum.SAVE_SETTINGS, {
+      [EventsEnum.SAVE_SETTINGS]: settingsData.username,
+    });
+    router.push(`/demo/perfil/${settingsData.username}`);
   };
 
   return (
@@ -124,6 +143,7 @@ function SettingsView() {
               placeholder="Nombre de usuario"
               ml="5"
               value={settingsData.username}
+              disabled
             />
           </Flex>
         </Box>
@@ -150,7 +170,29 @@ function SettingsView() {
           </Flex>
           <Flex align="center" wrap="nowrap" mt={5}>
             <Text mr="5" flex="0 1 auto">
-              Insignia de identificación
+              Color de usuario
+            </Text>
+            <Box w="100%" flex="1">
+              <Select
+                placeholder="Selecciona una insignia..."
+                options={purchasedItems ? purchasedItems : []}
+                noOptionsMessage={() =>
+                  '¡Aún no has desbloqueado colores! Visita la tienda para adquirirlos 😊'
+                }
+                defaultValue={selectedColor}
+                onChange={(obj) => handleChange(obj, 'pins')}
+                isOptionSelected={(obj) => obj.text === selectedColor.text}
+                getOptionLabel={(o) => {
+                  const uppercaseText =
+                    o.text.charAt(0).toUpperCase() + o.text.slice(1);
+                  return uppercaseText;
+                }}
+              />
+            </Box>
+          </Flex>
+          {/* <Flex align="center" wrap="nowrap" mt={5}>
+            <Text mr="5" flex="0 1 auto">
+              Color de usuario
             </Text>
             <Box w="100%" flex="1">
               <Select
@@ -163,11 +205,13 @@ function SettingsView() {
                 onChange={(obj) => handleChange(obj, 'pins')}
               />
             </Box>
-          </Flex>
+          </Flex> */}
         </Box>
       </Box>
       <Box as="footer" position="sticky" bottom="0" left="0">
-        <Button colorScheme="blue">Guardar cambios</Button>
+        <Button colorScheme="blue" onClick={handleReditect}>
+          Guardar cambios
+        </Button>
       </Box>
     </Box>
   );

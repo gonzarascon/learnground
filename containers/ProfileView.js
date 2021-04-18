@@ -6,9 +6,10 @@ import { useProfileStore, useStore } from '@/lib/store';
 import { getById } from '@/lib/firebase/dataFunctions';
 
 const ProfileView = () => {
-  const isGamified = useStore((state) =>
-    state.appType === 'gamified' ? true : false
-  );
+  const appType = useStore((state) => state.appType);
+
+  const isGamified = appType === 'gamified' ? true : false;
+
   const [profileData, visitorIsOwner] = useProfileStore((state) => [
     state.profileData,
     state.visitorIsOwner,
@@ -64,14 +65,16 @@ const ProfileView = () => {
               templateRows="repeat(auto-fill,minmax(350px, 1fr))"
               gap="20px"
             >
-              {profileData.courses.length ? (
-                profileData.courses.map((course) => (
-                  <CourseCard
-                    title="Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4"
-                    slug="master-en-css"
-                    key={course}
-                  />
-                ))
+              {appType && profileData && profileData.courses.length ? (
+                profileData.courses
+                  .find((c) => c.origin === appType)
+                  ?.map((course) => (
+                    <CourseCard
+                      title="Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4"
+                      slug="master-en-css"
+                      key={course}
+                    />
+                  ))
               ) : (
                 <Box>
                   <Text color="gray.400" fontSize="lg" mb={3}>
@@ -94,21 +97,23 @@ const ProfileView = () => {
                 templateRows="repeat(auto-fill,minmax(350px, 1fr))"
                 gap="20px"
               >
-                {profileData.createdCourses.length ? (
-                  profileData.createdCourses.map((course) => {
-                    const actualCourse = createdCourses.find(
-                      (o) => o.uid === course
-                    );
-                    return (
-                      <Skeleton key={course} isLoaded={actualCourse}>
-                        <CourseCard
-                          title={actualCourse?.title}
-                          slug={actualCourse?.slug}
-                          image={actualCourse?.thumbnail}
-                        />
-                      </Skeleton>
-                    );
-                  })
+                {appType && profileData && profileData.createdCourses.length ? (
+                  profileData.createdCourses
+                    .find((c) => c.origin === appType)
+                    ?.map((course) => {
+                      const actualCourse = createdCourses.find(
+                        (o) => o.uid === course
+                      );
+                      return (
+                        <Skeleton key={course} isLoaded={actualCourse}>
+                          <CourseCard
+                            title={actualCourse?.title}
+                            slug={actualCourse?.slug}
+                            image={actualCourse?.thumbnail}
+                          />
+                        </Skeleton>
+                      );
+                    })
                 ) : (
                   <Box>
                     <Text color="gray.400" fontSize="lg" mb={3}>

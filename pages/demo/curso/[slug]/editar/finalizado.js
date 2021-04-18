@@ -40,7 +40,7 @@ function GamificadoCourse() {
   const handleClickShare = (provider) => {
     const baseURL =
       process.env.NODE_ENV === 'production'
-        ? 'learnground.com'
+        ? window.location.href
         : 'localhost:3000';
     const path = router.asPath.replace('/editar/finalizado', '');
     const url = `https://${baseURL}${path}`;
