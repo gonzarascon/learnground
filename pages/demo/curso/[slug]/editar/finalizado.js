@@ -9,15 +9,30 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { LinkIcon } from '@chakra-ui/icons';
-import { useCourseEditStore } from '@/lib/store';
+import {
+  useCourseEditStore,
+  useProfileStore,
+  useStore,
+  useUserStore,
+} from '@/lib/store';
 import { Twitter, Whatsapp } from '@/components/icons';
 import { useRouter } from 'next/router';
 import { Share } from '@/lib/share';
+import useCookies from '@/lib/useCookies';
+import { updateBadgeAndXP } from '@/lib/firebase/dataFunctions';
+import { missionsDataset } from '@/lib/gamifiedHandler';
 
 function GamificadoCourse() {
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const courseData = useCourseEditStore((state) => state.courseData);
+  const setBadge = useProfileStore((state) => state.setBadge);
+  const [cookieValue, setCookie, isLoading] = useCookies();
+  const [appType, setProfileAlert] = useStore((state) => [
+    state.appType,
+    state.setProfileAlert,
+  ]);
+  const [uid] = useUserStore((state) => [state.uid]);
 
   useEffect(() => {
     if (courseData) {
@@ -38,6 +53,39 @@ function GamificadoCourse() {
    * @param {"wp" | "tw" | "link"} provider
    */
   const handleClickShare = (provider) => {
+    if (appType === 'gamified') {
+      const badgeToEarn = missionsDataset.find(
+        (obj) => obj.pk === 'shared_course'
+      );
+
+      if (!isLoading && badgeToEarn) {
+        if (!cookieValue) {
+          setCookie({
+            badges: [badgeToEarn],
+          });
+
+          const { badgeId, xpAmmount } = badgeToEarn;
+          updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+            setBadge(badgeId);
+          });
+        } else {
+          const badges = cookieValue.badges || [];
+
+          if (!badges.find((obj) => obj.pk === 'shared_course')) {
+            setCookie({
+              badges: [...badges, badgeToEarn],
+            });
+
+            const { badgeId, xpAmmount } = badgeToEarn;
+            updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+              setBadge(badgeId);
+            });
+          }
+        }
+        setProfileAlert(true);
+      }
+    }
+
     const baseURL =
       process.env.NODE_ENV === 'production'
         ? window.location.href

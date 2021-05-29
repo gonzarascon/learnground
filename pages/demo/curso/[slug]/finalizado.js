@@ -93,7 +93,40 @@ function GamificadoCourse() {
    * @param {"wp" | "tw" | "link"} provider
    */
   const handleClickShare = (provider) => {
-    const baseURL = window.location;
+    if (appType === 'gamified') {
+      const badgeToEarn = missionsDataset.find(
+        (obj) => obj.pk === 'shared_course'
+      );
+
+      if (!isLoading && badgeToEarn) {
+        if (!cookieValue) {
+          setCookie({
+            badges: [badgeToEarn],
+          });
+
+          const { badgeId, xpAmmount } = badgeToEarn;
+          updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+            setBadge(badgeId);
+          });
+        } else {
+          const badges = cookieValue.badges || [];
+
+          if (!badges.find((obj) => obj.pk === 'shared_course')) {
+            setCookie({
+              badges: [...badges, badgeToEarn],
+            });
+
+            const { badgeId, xpAmmount } = badgeToEarn;
+            updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+              setBadge(badgeId);
+            });
+          }
+        }
+        setProfileAlert(true);
+      }
+    }
+
+    const baseURL = window.location.href;
     const path = router.asPath.replace('/finalizado', '');
     const url = `https://${baseURL}${path}`;
     Share('¡Encontré este curso en learnground.com, mirá!', url, provider);
