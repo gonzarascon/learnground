@@ -17,8 +17,13 @@ import {
   createCourse,
   getById,
   updateCollection,
+  updateBadgeAndXP,
+  registerEvent,
 } from '@/lib/firebase/dataFunctions';
-import { useStore, useUserStore } from '@/lib/store';
+import { useStore, useUserStore, useProfileStore } from '@/lib/store';
+import useCookies from '@/lib/useCookies';
+import { missionsDataset } from '@/lib/gamifiedHandler';
+import { EventsEnum } from '@/lib/events';
 
 const StepLabel = ({ number, label, active }) => {
   return (
@@ -52,16 +57,21 @@ const MotionBox = motion.custom(Flex);
 
 const CreateCourseView = ({ categories }) => {
   const router = useRouter();
-  const appType = useStore((state) => state.appType);
+  const [appType, setProfileAlert] = useStore((state) => [
+    state.appType,
+    state.setProfileAlert,
+  ]);
   const [uid, createdCourses] = useUserStore((state) => [
     state.uid,
     state.user.createdCourses,
   ]);
+  const [cookieValue, setCookie] = useCookies();
   const [step, setStep] = useState(1);
   const [courseInfo, setCourseInfo] = useState({
     title: '',
     category: '',
   });
+  const setBadge = useProfileStore((state) => state.setBadge);
 
   const BoxVariants = {
     initial: {
@@ -75,6 +85,38 @@ const CreateCourseView = ({ categories }) => {
     },
   };
 
+  const handleBadge = () => {
+    const badgeToEarn = missionsDataset.find(
+      (obj) => obj.pk === 'first_created_course'
+    );
+
+    if (!cookieValue) {
+      setCookie({
+        badges: [badgeToEarn],
+      });
+
+      const { badgeId, xpAmmount } = badgeToEarn;
+      updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+        setBadge(badgeId);
+      });
+    } else {
+      const badges = cookieValue.badges || [];
+
+      if (!badges.find((obj) => obj.pk === 'first_created_course')) {
+        setCookie({
+          badges: [...badges, badgeToEarn],
+        });
+
+        const { badgeId, xpAmmount } = badgeToEarn;
+        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+          setBadge(badgeId);
+        });
+      }
+    }
+
+    setProfileAlert(true);
+  };
+
   /**
    * handleInfo
    * @param {{key: 'title' | 'category'; value: string}} Obj
@@ -84,10 +126,17 @@ const CreateCourseView = ({ categories }) => {
   };
 
   const handleSubmit = async () => {
+    handleBadge();
     const courseId = await createCourse({
       title: courseInfo.title,
       category: courseInfo.category,
       uid,
+      origin: appType,
+    });
+
+    registerEvent(EventsEnum.CREATE_COURSE, {
+      [EventsEnum.CREATE_COURSE]: courseInfo.title,
+      origin: appType,
     });
 
     await updateCollection('users', uid, {
@@ -96,16 +145,23 @@ const CreateCourseView = ({ categories }) => {
 
     await getById('courses', courseId).then((response) => {
       if (response.data()) {
-        const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
         const slug = response.data().slug;
-        router.push(`/demo/${pathType}/curso/${slug}/editar`);
+        router.push(`/demo/curso/${slug}/editar`);
       }
     });
   };
 
   return (
     <Flex direction="column" align="center" w="100%">
-      <Box w="100%" maxW="600px" py="5">
+      <Box
+        w="100%"
+        maxW="600px"
+        py="5"
+        bg="white"
+        rounded="lg"
+        shadow="base"
+        my="5"
+      >
         <Heading as="h4" fontSize="lg" color="gray.400" textAlign="center">
           Crear un nuevo curso
         </Heading>
@@ -137,6 +193,11 @@ const CreateCourseView = ({ categories }) => {
               onChange={(e) =>
                 handleInfo({ key: 'title', value: e.target.value })
               }
+              bg="white"
+              py="2"
+              px="5"
+              rounded="lg"
+              shadow="base"
             />
 
             <Button

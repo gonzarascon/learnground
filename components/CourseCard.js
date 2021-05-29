@@ -2,20 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
-import { Box, Button, Flex, Heading, Image, Progress } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
 
-function CourseCard({
-  title = '',
-  slug = '',
-  image = '',
-  progress,
-  lastClass = 0,
-}) {
+function CourseCard({ title = '', slug = '', image = '' }) {
   const [coursePath, setCoursePath] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    const path = `${router.pathname}/curso/${slug}`;
+    const path = `/demo/curso/${slug}`;
     setCoursePath(path);
     router.prefetch(path);
   }, []);
@@ -24,6 +18,7 @@ function CourseCard({
     router.push(coursePath);
   };
 
+  console.log('asd');
   return (
     <Box
       rounded="lg"
@@ -34,9 +29,12 @@ function CourseCard({
       bgColor="white"
     >
       <Image
-        src={image.length > 0 ? image : '/images/course_placeholder.png'}
+        src={image}
+        fallbackSrc="/images/course_placeholder.png"
         alt={title}
-        objectFit="contain"
+        objectFit="cover"
+        h="224px"
+        w="100%"
       />
       <Box p="5">
         <Heading as="h4" fontSize="md" isTruncated title={title}>
@@ -48,24 +46,10 @@ function CourseCard({
             variant="solid"
             color="white"
             mt="3"
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick()}
           >
             Comenzar
           </Button>
-
-          {progress && (
-            <Box w="50%">
-              <Heading as="h5" fontWeight="300" fontSize="sm">
-                Progreso
-              </Heading>
-              <Progress
-                color="green"
-                value={progress * 100}
-                rounded="lg"
-                mt="2"
-              />
-            </Box>
-          )}
         </Flex>
       </Box>
     </Box>
@@ -74,8 +58,6 @@ function CourseCard({
 
 CourseCard.propTypes = {
   image: PropTypes.string,
-  lastClass: PropTypes.number,
-  progress: PropTypes.number,
   slug: PropTypes.string,
   title: PropTypes.string,
 };

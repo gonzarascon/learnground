@@ -19,14 +19,16 @@ import {
 import { DeleteIcon, AddIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { useDropzone } from 'react-dropzone';
-import { useCourseEditStore, useStore } from '@/lib/store';
+import { useCourseEditStore } from '@/lib/store';
 import { fetcher, slugify } from '@/lib/helpers';
 import { updateCollection, uploadFile } from '@/lib/firebase/dataFunctions';
 
 const DescriptionView = () => {
-  const courseData = useCourseEditStore((state) => state.courseData);
+  const [courseData, setCourseData] = useCourseEditStore((state) => [
+    state.courseData,
+    state.setCourseData,
+  ]);
   const { data: categories } = useSWR('/api/categories/get', fetcher);
-  const appType = useStore((state) => state.appType);
   const router = useRouter();
   const [data, setData] = useState({
     image: undefined,
@@ -40,13 +42,15 @@ const DescriptionView = () => {
     if (courseData) {
       setData((data) => ({
         ...data,
-        title: courseData.data.title,
-        categoryId: courseData.data.categoryId,
-        concepts: courseData.data.concepts,
-        image: {
-          preview: courseData.data.thumbnail,
-        },
-        description: courseData.data.description,
+        title: courseData.data?.title,
+        categoryId: courseData.data?.categoryId,
+        concepts: courseData.data?.concepts,
+        image: courseData.data?.thumbnail
+          ? {
+              preview: courseData.data.thumbnail,
+            }
+          : undefined,
+        description: courseData.data?.description,
       }));
     }
   }, [courseData]);
@@ -74,18 +78,20 @@ const DescriptionView = () => {
       });
     }
 
-    await updateCollection('courses', courseData.uid, {
+    const newData = {
       title: data.title,
       slug: slugify(data.title),
       thumbnail: thumbnailURL,
       description: data.description,
       concepts: data.concepts,
-    }).then(() => {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
+    };
 
+    await updateCollection('courses', courseData.uid, newData).then(() => {
       console.log('UPDATE FINISHED');
 
-      router.push(`/demo/${pathType}/curso/${slugify(data.title)}/`);
+      setCourseData({ data: { ...newData }, uid: courseData.uid });
+
+      router.push(`/demo/curso/${slugify(data.title)}/editar/finalizado`);
     });
   };
 
@@ -121,8 +127,6 @@ const DescriptionView = () => {
     },
     [data]
   );
-
-  /* TODO: bring data from db */
 
   return (
     <Flex
@@ -182,7 +186,7 @@ const DescriptionView = () => {
           </FormControl>
           <Image
             src={data.image?.preview}
-            fallbackSrc="https://via.placeholder.com/641x370"
+            fallbackSrc="/images/course_placeholder.png"
             w="100%"
             rounded="lg"
             mt="3"
@@ -206,7 +210,7 @@ const DescriptionView = () => {
           <FormControl>
             <FormLabel>¿Qué aprenderan tus alumnos?</FormLabel>
 
-            {data.concepts.map((concept, index) => (
+            {data.concepts?.map((concept, index) => (
               <Flex key={`key_${index}`} py="2">
                 <Input
                   placeholder="A crear interfaces dinamicas."

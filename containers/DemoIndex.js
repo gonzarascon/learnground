@@ -9,17 +9,14 @@ import { useRealtime } from '@/lib/firebase/dataFunctions';
 function DemoIndex() {
   const router = useRouter();
   const [courses, setCourses] = useState([]);
-  const [appType, userType] = useStore((state) => [
+  const [appType, userType, loggedIn] = useStore((state) => [
     state.appType,
     state.userType,
+    state.loggedIn,
   ]);
 
   const handleCreateCourseRedirect = () => {
-    const URL = `/demo/${
-      appType === 'gamified' ? 'gamificado' : 'no-gamificado'
-    }/curso/crear`;
-
-    router.push(URL);
+    router.push('/demo/curso/crear');
   };
 
   const fetchData = useCallback(async (snapshot) => {
@@ -32,7 +29,7 @@ function DemoIndex() {
         }
       }
 
-      setCourses(docsArr);
+      setCourses(docsArr.filter((o) => o.origin === appType));
     }
   }, []);
 
@@ -42,13 +39,9 @@ function DemoIndex() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    console.log(courses);
-  }, [courses]);
-
   return (
-    <Flex direction="column" w="100%" py="10">
-      {userType === 'instructor' && (
+    <Flex direction="column" w="100%" p="10" h="100%">
+      {userType === 'instructor' && loggedIn && (
         <Flex
           justify="space-between"
           bg="gray.100"
@@ -80,22 +73,44 @@ function DemoIndex() {
       <Heading fontSize="5xl" as="h2">
         Cursos disponibles
       </Heading>
-      <Grid
-        width="100%"
-        as="section"
-        gridTemplateColumns="repeat(auto-fill, 300px)"
-        mt="10"
-      >
-        {courses.map((course) => (
-          <CourseCard
-            title={course.title}
-            progress={0.5}
-            image={course.thumbnail}
-            slug={course.slug}
-            key={course.uid}
-          />
-        ))}
-      </Grid>
+      {!courses.length && (
+        <Heading
+          fontSize="2xl"
+          as="h3"
+          textAlign="center"
+          w="100%"
+          color="gray.500"
+          mt={5}
+          bg="blue.100"
+          maxW="720px"
+          boxShadow="base"
+          rounded="md"
+          alignSelf="center"
+          px="10"
+          py="5"
+        >
+          ¡Ups! Actualmente no hay cursos disponibles, regresa más tarde.
+        </Heading>
+      )}
+      {courses.length > 0 && (
+        <Grid
+          width="100%"
+          as="section"
+          gridTemplateColumns="repeat(auto-fill, 300px)"
+          mt="10"
+          gap={6}
+        >
+          {courses.map((course) => (
+            <CourseCard
+              title={course.title}
+              progress={0.5}
+              image={course.thumbnail}
+              slug={course.slug}
+              key={course.uid}
+            />
+          ))}
+        </Grid>
+      )}
     </Flex>
   );
 }

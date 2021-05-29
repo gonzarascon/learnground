@@ -25,7 +25,7 @@ import {
   deleteContent,
   useRealtime,
 } from '@/lib/firebase/dataFunctions';
-import { useCourseEditStore, useStore } from '@/lib/store';
+import { useCourseEditStore } from '@/lib/store';
 
 const ContentView = () => {
   const router = useRouter();
@@ -33,8 +33,6 @@ const ContentView = () => {
   const [contentName, setContentName] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const courseData = useCourseEditStore((state) => state.courseData);
-
-  const appType = useStore((state) => state.appType);
 
   const fetchData = useCallback(
     async (snapshot) => {
@@ -80,11 +78,10 @@ const ContentView = () => {
   };
 
   const handleEditContent = (content) => {
-    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
     const {
       data: { slug },
     } = courseData;
-    router.push(`/demo/${pathType}/curso/${slug}/editar/contenido/${content}`);
+    router.push(`/demo/curso/${slug}/editar/contenido/${content}`);
   };
 
   const handleDeleteContent = async (content) => {

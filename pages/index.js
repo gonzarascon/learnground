@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import Link from 'next/link';
-import { useStore } from '@/lib/store';
 
 import { HomeContainer } from '@/containers';
 import { Layout } from '@/components';
+import { registerEvent } from '@/lib/firebase/dataFunctions';
 
 function Home() {
+  useEffect(() => {
+    registerEvent('Visited Page', { value: 'Index' });
+  }, []);
   return (
     <Layout>
       <HomeContainer />

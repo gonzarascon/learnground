@@ -10,20 +10,19 @@ import {
   Input,
   Link as ChakraLink,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import { getById, login } from '@/lib/firebase/dataFunctions';
 import { useUserStore, useStore } from '@/lib/store';
 
 const LoginContainer = () => {
   const router = useRouter();
+  const toast = useToast();
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
   });
-  const [appType, setLoggedIn] = useStore((state) => [
-    state.appType,
-    state.setLoggedIn,
-  ]);
+  const setLoggedIn = useStore((state) => state.setLoggedIn);
   const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
@@ -41,18 +40,24 @@ const LoginContainer = () => {
           if (userData.data()) {
             setUser({ user: userData.data(), uid: response.user.uid });
             setLoggedIn(true);
+
+            if (router.query.fromCourse === 'true' && router.query.courseSlug) {
+              router.push(`/demo/curso/${router.query.courseSlug}`);
+              return;
+            }
+
+            router.push('/demo');
           }
         })
       )
-      .finally(() => {
-        const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-
-        if (router.query.fromCourse === 'true' && router.query.courseSlug) {
-          router.push(`/demo/${pathType}/curso/${router.query.courseSlug}`);
-          return;
-        }
-
-        router.push(`/demo/${pathType}`);
+      .catch(() => {
+        toast({
+          title: 'Ocurrió un error',
+          description: 'Por favor, inténtalo nuevamente.',
+          status: 'error',
+          duration: 5000,
+          position: 'top',
+        });
       });
   };
 

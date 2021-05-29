@@ -17,25 +17,39 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, EditIcon } from '@chakra-ui/icons';
-import { useCourseStore, useStore, useUserStore } from '@/lib/store';
+import {
+  useCourseStore,
+  useProfileStore,
+  useStore,
+  useUserStore,
+} from '@/lib/store';
 import { fetcher } from '@/lib/helpers';
 import ActionButton from '@/components';
-import { subscribeUserToCourse } from '@/lib/firebase/dataFunctions';
+import {
+  registerEvent,
+  subscribeUserToCourse,
+  updateBadgeAndXP,
+} from '@/lib/firebase/dataFunctions';
+import { missionsDataset } from '@/lib/gamifiedHandler';
+import useCookies from '@/lib/useCookies';
+import { EventsEnum } from '@/lib/events';
 
 const CourseIntro = () => {
   const router = useRouter();
   const [toClass, setToClass] = useState(1);
   const [isSubscribed, setIsSubscribed] = useState(undefined);
-
+  const [cookieValue, setCookie] = useCookies();
   const [courseData, courseId] = useCourseStore((state) => [
     state.courseData,
     state.courseId,
   ]);
-  const [appType, loggedIn] = useStore((state) => [
-    state.appType,
+  const [loggedIn, setProfileAlert] = useStore((state) => [
     state.loggedIn,
+    state.setProfileAlert,
   ]);
   const uid = useUserStore((state) => state.uid);
+  const setBadge = useProfileStore((state) => state.setBadge);
+
   const { data } = useSWR(
     courseData && `/api/categories/${courseData.categoryId}`,
     fetcher
@@ -58,16 +72,45 @@ const CourseIntro = () => {
 
   useEffect(() => {
     if (courseData) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
       if (loggedIn) {
-        router.prefetch(
-          `/demo/${pathType}/curso/${courseData.slug}/clase/${toClass}`
-        );
+        router.prefetch(`/demo/curso/${courseData.slug}/clase/${toClass}`);
       } else {
         router.prefetch(`/auth/iniciar-sesion`);
       }
     }
   }, [toClass, loggedIn, courseData]);
+
+  const handleBadge = () => {
+    const badgeToEarn = missionsDataset.find(
+      (obj) => obj.pk === 'first_subscribed_course'
+    );
+
+    if (!cookieValue) {
+      setCookie({
+        badges: [badgeToEarn],
+      });
+
+      const { badgeId, xpAmmount } = badgeToEarn;
+      updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+        setBadge(badgeId);
+      });
+    } else {
+      const badges = cookieValue.badges || [];
+
+      if (!badges.find((obj) => obj.pk === 'first_subscribed_course')) {
+        setCookie({
+          badges: [...badges, badgeToEarn],
+        });
+
+        const { badgeId, xpAmmount } = badgeToEarn;
+        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+          setBadge(badgeId);
+        });
+      }
+    }
+
+    setProfileAlert(true);
+  };
 
   const subscribeUser = useCallback(async () => {
     const checkSubscribed = _.find(
@@ -76,6 +119,10 @@ const CourseIntro = () => {
     );
 
     if (!checkSubscribed) {
+      handleBadge();
+      registerEvent(EventsEnum.SUBSCRIBE_USER, {
+        [EventsEnum.SUBSCRIBE_USER]: uid,
+      });
       await subscribeUserToCourse({ courseUid: courseId, userUid: uid });
       return;
     } else {
@@ -84,12 +131,9 @@ const CourseIntro = () => {
   }, [courseData, uid]);
 
   const handleClickStart = async () => {
-    const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
     if (loggedIn) {
       await subscribeUser();
-      router.push(
-        `/demo/${pathType}/curso/${courseData.slug}/clase/${toClass}`
-      );
+      router.push(`/demo/curso/${courseData.slug}/clase/${toClass}`);
     } else {
       router.push({
         pathname: `/auth/iniciar-sesion`,
@@ -100,8 +144,7 @@ const CourseIntro = () => {
 
   const handleClickEdit = () => {
     if (courseData.creatorId === uid) {
-      const pathType = appType === 'normal' ? 'no-gamificado' : 'gamificado';
-      router.push(`/demo/${pathType}/curso/${courseData.slug}/editar`);
+      router.push(`/demo/curso/${courseData.slug}/editar`);
     }
   };
 

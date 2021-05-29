@@ -1,13 +1,19 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DemoLayout } from '@/components';
 import { ClassView } from '@/containers';
 import { getContentByNumber } from '@/lib/firebase/dataFunctionsNode';
+import { useContentStore } from '@/lib/store';
 
 function GamificadoCourse({ data }) {
+  const setContent = useContentStore((state) => state.setContent);
+
+  useEffect(() => {
+    setContent(data);
+  }, [setContent]);
   return (
     <DemoLayout isCourse>
-      <ClassView source={data} />
+      <ClassView source={data.data} />
     </DemoLayout>
   );
 }
@@ -30,7 +36,7 @@ export async function getServerSideProps(ctx) {
 
   return {
     props: {
-      data: contentData.data.data,
+      data: contentData,
     },
   };
 }
