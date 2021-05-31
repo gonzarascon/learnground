@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Grid, Heading, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Button, Grid, Heading, Text } from '@chakra-ui/react';
 import { UserInformation, UserMedals } from '@/components/Profile';
 import { CourseCard } from '@/components';
 import { useProfileStore, useStore } from '@/lib/store';
 import { getById } from '@/lib/firebase/dataFunctions';
+import { useRouter } from 'next/router';
 
 const ProfileView = () => {
   const appType = useStore((state) => state.appType);
+
+  const router = useRouter();
 
   const isGamified = appType === 'gamified' ? true : false;
 
@@ -14,6 +17,7 @@ const ProfileView = () => {
     state.profileData,
     state.visitorIsOwner,
   ]);
+  const [takenCourses, setTakenCourses] = useState([]);
   const [createdCourses, setCreatedCourses] = useState([]);
 
   useEffect(() => {
@@ -37,10 +41,34 @@ const ProfileView = () => {
 
         setCreatedCourses(coursesArr);
       }
+
+      if (profileData && profileData.courses) {
+        const coursesArr = [];
+
+        for (let uid in profileData.courses) {
+          const objData = await getById('courses', profileData.courses[uid]);
+
+          if (objData.data()) {
+            coursesArr.push({
+              uid: objData.id,
+              ...objData.data(),
+            });
+          }
+        }
+        setTakenCourses(coursesArr);
+      }
     };
 
     data();
   }, [profileData]);
+
+  const handleClickCourse = () => {
+    router.push('/demo');
+  };
+
+  const handleClickCreate = () => {
+    router.push('/demo/curso/crear');
+  };
 
   return (
     <Grid
@@ -65,23 +93,33 @@ const ProfileView = () => {
               templateRows="repeat(auto-fill,minmax(350px, 1fr))"
               gap="20px"
             >
-              {appType && profileData && profileData.courses.length ? (
-                profileData.courses
-                  .find((c) => c.origin === appType)
-                  ?.map((course) => (
-                    <CourseCard
-                      title="Master en CSS: Responsive, SASS, Flexbox, Grid y Bootstrap 4"
-                      slug="master-en-css"
-                      key={course}
-                    />
-                  ))
+              {appType &&
+              profileData &&
+              profileData?.courses?.length &&
+              takenCourses.length ? (
+                takenCourses?.map((course) => {
+                  if (course.origin === appType) {
+                    return (
+                      <CourseCard
+                        title={course?.title}
+                        slug={course.slug}
+                        image={course.thumbnail}
+                        key={course}
+                      />
+                    );
+                  } else {
+                    return null;
+                  }
+                })
               ) : (
                 <Box>
                   <Text color="gray.400" fontSize="lg" mb={3}>
                     ¡Ups, no hay cursos aún!
                   </Text>
                   {visitorIsOwner && (
-                    <Button colorScheme="green">Comienza uno ahora</Button>
+                    <Button colorScheme="green" onClick={handleClickCourse}>
+                      Comienza uno ahora
+                    </Button>
                   )}
                 </Box>
               )}
@@ -97,30 +135,32 @@ const ProfileView = () => {
                 templateRows="repeat(auto-fill,minmax(350px, 1fr))"
                 gap="20px"
               >
-                {appType && profileData && profileData.createdCourses.length ? (
-                  profileData.createdCourses
-                    .find((c) => c.origin === appType)
-                    ?.map((course) => {
-                      const actualCourse = createdCourses.find(
-                        (o) => o.uid === course
-                      );
+                {appType &&
+                profileData &&
+                profileData?.createdCourses.length &&
+                createdCourses.length ? (
+                  createdCourses?.map((course) => {
+                    if (course.origin === appType) {
                       return (
-                        <Skeleton key={course} isLoaded={actualCourse}>
-                          <CourseCard
-                            title={actualCourse?.title}
-                            slug={actualCourse?.slug}
-                            image={actualCourse?.thumbnail}
-                          />
-                        </Skeleton>
+                        <CourseCard
+                          title={course?.title}
+                          slug={course?.slug}
+                          image={course?.thumbnail}
+                        />
                       );
-                    })
+                    } else {
+                      return null;
+                    }
+                  })
                 ) : (
                   <Box>
                     <Text color="gray.400" fontSize="lg" mb={3}>
                       ¡Ups, no hay cursos aún!
                     </Text>
                     {visitorIsOwner && (
-                      <Button colorScheme="green">Crea uno ahora</Button>
+                      <Button colorScheme="green" onClick={handleClickCreate}>
+                        Crea uno ahora
+                      </Button>
                     )}
                   </Box>
                 )}

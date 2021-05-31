@@ -18,7 +18,6 @@ function CourseCard({ title = '', slug = '', image = '' }) {
     router.push(coursePath);
   };
 
-  console.log('asd');
   return (
     <Box
       rounded="lg"
