@@ -109,7 +109,7 @@ const AvatarMenu = () => {
         <Flex display="flex" flexDir="row" alignItems="center">
           <Avatar size="sm" name={parseCammelCase(user.username)}>
             <AnimatePresence>
-              {profileAlert && (
+              {profileAlert && isGamified && (
                 <MotionBadge
                   bg="green.500"
                   variants={BadgeVariants}
