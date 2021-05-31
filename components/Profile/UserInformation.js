@@ -89,8 +89,6 @@ const UserInformation = () => {
     }
   }, [isGamified]);
 
-  console.log(selectedColor);
-
   return (
     <Box gridArea="info" maxW="441px">
       {profileData && (
