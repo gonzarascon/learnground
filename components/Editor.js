@@ -47,13 +47,21 @@ const editorConfiguration = {
 };
 
 const EditorComponent = ({ editorValue, setEditorValue }) => {
+  const [showEditor, setShowEditor] = useState(false);
+
+  useEffect(() => {
+    setShowEditor(true);
+
+    return () => setShowEditor(false);
+  }, [editorValue]);
+
   const handleEditorChange = (_ev, ed) => {
     const data = ed.getData();
 
     setEditorValue(data);
   };
 
-  const renderEditor = () => {
+  const renderEditor = (data) => {
     const Editor = require('@/custom-ckeditor/build/ckeditor');
 
     return (
@@ -61,14 +69,14 @@ const EditorComponent = ({ editorValue, setEditorValue }) => {
         editor={Editor}
         config={editorConfiguration}
         onChange={handleEditorChange}
-        data={editorValue}
+        data={data}
       />
     );
   };
 
   return (
     <>
-      {typeof window !== 'undefined' && renderEditor()}{' '}
+      {typeof window !== 'undefined' && showEditor && renderEditor(editorValue)}{' '}
       <style jsx>{`
         :global(.ck-editor__editable) {
           min-height: 700px;

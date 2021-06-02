@@ -9,12 +9,15 @@ import {
   Heading,
   Input,
 } from '@chakra-ui/react';
-import { Editor } from '@/components';
+import dynamic from 'next/dynamic';
+
 import 'highlight.js/styles/default.css';
 
 import '@/lib/highlight';
 import { useCourseEditStore } from '@/lib/store';
 import { updateContent } from '@/lib/firebase/dataFunctions';
+
+const Editor = dynamic(() => import('@/components/Editor'), { ssr: false });
 
 const EditContentView = () => {
   const [contentData, courseData] = useCourseEditStore((state) => [
@@ -27,11 +30,10 @@ const EditContentView = () => {
 
   useEffect(() => {
     if (contentData) {
-      console.log(contentData.data.data);
       setContentTitle(contentData.data.title);
       setEditorValue(contentData.data.data);
     }
-  }, [contentData]);
+  }, [router.asPath, contentData]);
 
   useEffect(() => {
     if (courseData) {
