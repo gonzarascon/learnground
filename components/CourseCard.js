@@ -17,7 +17,6 @@ function CourseCard({ title = '', slug = '', image = '' }) {
   const handleButtonClick = () => {
     router.push(coursePath);
   };
-
   return (
     <Box
       rounded="lg"

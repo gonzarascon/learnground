@@ -22,9 +22,15 @@ function DemoIndex() {
   const fetchData = useCallback(async (snapshot) => {
     const docsArr = [];
     if (!snapshot.empty) {
+      console.log(snapshot.docs);
+
       for (let i in snapshot.docs) {
         const doc = snapshot.docs[i];
-        if (doc.exists && doc.id !== 'model') {
+        if (
+          doc.exists &&
+          doc.id !== 'model' &&
+          !docsArr.find((x) => x.uid === doc.id)
+        ) {
           docsArr.push({ ...doc.data(), uid: doc.id });
         }
       }
