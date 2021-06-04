@@ -16,7 +16,7 @@ const ClassList = () => {
       d={{ base: 'flex', xxxl: 'block' }}
       alignItems="center"
       w={{ base: '100%', xxxl: 'auto' }}
-      maxW="760px"
+      maxW={{ base: '760px', lg: '920px' }}
       mt={{ base: '5', xxxl: 'unset' }}
     >
       <Heading as="h3" fontSize="lg" mr="5" flex="1 1 160px">
@@ -28,30 +28,32 @@ const ClassList = () => {
         justifyContent="space-evenly"
         w="100%"
       >
-        {contents.map((content) => {
-          const isActive = content.order.toString() === query['class-number'];
+        {contents
+          .sort((a, b) => a.order - b.order)
+          .map((content) => {
+            const isActive = content.order.toString() === query['class-number'];
 
-          return (
-            <ListItem
-              d="flex"
-              key={content.uid}
-              alignItems="center"
-              _hover={!isActive && { backgroundColor: 'blue.200' }}
-              p="2"
-              rounded="md"
-              mb="2"
-              title={`${content.order} ${content.title}`}
-              bg={isActive ? 'blue.400' : 'blue.100'}
-              color={isActive && 'white'}
-            >
-              <Text fontSize="2xl" fontWeight="bold" mr={2}>
-                {content.order}
-              </Text>
+            return (
+              <ListItem
+                d="flex"
+                key={content.uid}
+                alignItems="center"
+                _hover={!isActive && { backgroundColor: 'blue.200' }}
+                p="2"
+                rounded="md"
+                mb="2"
+                title={`${content.order} ${content.title}`}
+                bg={isActive ? 'blue.400' : 'blue.100'}
+                color={isActive && 'white'}
+              >
+                <Text fontSize="2xl" fontWeight="bold" mr={2}>
+                  {content.order}
+                </Text>
 
-              <Text isTruncated>{content.title}</Text>
-            </ListItem>
-          );
-        })}
+                <Text isTruncated>{content.title}</Text>
+              </ListItem>
+            );
+          })}
       </List>
     </Box>
   );

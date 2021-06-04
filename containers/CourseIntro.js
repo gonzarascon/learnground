@@ -192,7 +192,7 @@ const CourseIntro = () => {
           <Heading as="h4" fontSize="2xl">
             En este curso aprenderás:
           </Heading>
-          <List mt={3} spacing={3}>
+          <List mt={3} mb={5} spacing={3}>
             {courseData?.concepts.map((concept, index) => (
               <ListItem key={`${concept}-${index}`}>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
