@@ -29,7 +29,6 @@ const Markdown = ({ source = '' }) => {
 
   useEffect(() => {
     if (router && contents) {
-      console.log(router.query);
       const classIndex = contents.findIndex(
         (o) => o.order.toString() === router.query['class-number']
       );
@@ -117,7 +116,7 @@ const Markdown = ({ source = '' }) => {
       position="relative"
       height="100%"
     >
-      <Box p="10" height="100%" bgColor="white" overflowY="auto">
+      <Box p="10" height="100%" bgColor="white" overflowY="auto" pb="80px">
         <ReactMarkdown renderers={renderers} plugins={[gfm, gemoji]}>
           {source}
         </ReactMarkdown>
@@ -151,6 +150,19 @@ const Markdown = ({ source = '' }) => {
           Próxima clase
         </Button>
       </Flex>
+      <style jsx>{`
+        :global(a) {
+          color: #4299e1;
+          text-decoration: underline;
+        }
+        :global(h1, h2, h3, h4, h5, h6) {
+          margin-top: 1.25rem;
+        }
+
+        :global(img, picture, figure) {
+          margin: 1.25rem 0;
+        }
+      `}</style>
     </Box>
   );
 };

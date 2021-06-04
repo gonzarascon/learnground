@@ -16,7 +16,7 @@ function ClassView({ source = '' }) {
   //TODO: handle layout change based on appType
 
   return (
-    <Skeleton isLoaded={appType !== null}>
+    <Skeleton isLoaded={source}>
       <Grid
         templateColumns={isGamified ? '70% 1fr' : '1fr'}
         w="100%"

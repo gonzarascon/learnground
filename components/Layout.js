@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
       </Box>
       <Flex align="center" justify="center">
         <Text fontSize="sm" color="gray.500">
-          My footer
+          Hecho con ❤️ y 👷‍♂️ por Gonzalo Rascón
         </Text>
       </Flex>
     </Flex>
