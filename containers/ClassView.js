@@ -1,32 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Flex, Grid, Heading, Skeleton } from '@chakra-ui/react';
+import { Flex, Grid, Skeleton } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
-import { ChatRoom, CourseCard, Markdown } from '@/components';
+import { ChatRoom, Markdown } from '@/components';
 
 function ClassView({ source = '' }) {
-  const router = useRouter();
-  const [isGamified, appType] = useStore((state) => [
+  const [isGamified] = useStore((state) => [
     state.appType === 'gamified' ? true : false,
-    state.appType,
   ]);
 
   //TODO: handle layout change based on appType
 
+  console.log(isGamified);
+
   return (
     <Skeleton isLoaded={source}>
-      <Grid
-        templateColumns={isGamified ? '70% 1fr' : '1fr'}
+      <Flex
         w="100%"
         py="10"
         maxH="927px"
         height="calc(100vh - 21px - 89px)"
+        wrap="nowrap"
       >
         <Markdown source={source} />
         {isGamified && <ChatRoom />}
-      </Grid>
+      </Flex>
     </Skeleton>
   );
 }

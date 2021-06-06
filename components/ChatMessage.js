@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Box, Flex, Text, Heading, Skeleton } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 const MotionBox = motion.custom(Box);
 
@@ -33,8 +34,15 @@ const ChatMessage = ({
         {hasBadge && (
           <Box w="15px" h="15px" bg="teal.300" rounded="md" mr="3"></Box>
         )}
-        <Heading as="h4" size="md" color={usernameColor}>
-          {username}
+        <Heading
+          as="h4"
+          size="md"
+          color={usernameColor}
+          _hover={{ textDecoration: 'underline' }}
+        >
+          <Link href={`/demo/perfil/${username}`}>
+            <a>{username}</a>
+          </Link>
         </Heading>
       </Flex>
       <Text>{message}</Text>

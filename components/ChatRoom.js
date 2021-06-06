@@ -52,6 +52,20 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
+    const listener = (event) => {
+      if (event.code === 'Enter' && inputMessage !== '') {
+        sendMessage();
+        event.preventDefault();
+        // callMyFunction();
+      }
+    };
+    document.addEventListener('keypress', listener);
+    return () => {
+      document.removeEventListener('keypress', listener);
+    };
+  }, []);
+
+  useEffect(() => {
     if (chatId) {
       const unsubscribe = useChatRoom(`/chats/${chatId}/messages`, fetchData);
 
@@ -88,6 +102,8 @@ const ChatRoom = () => {
       roundedBottomRight="lg"
       roundedTopRight="lg"
       direction="column"
+      w="100%"
+      maxW="30%"
     >
       <Box as="header" borderBottom="1px solid" borderColor="gray.400" p="5">
         <Heading as="h3" size="md">

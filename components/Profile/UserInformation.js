@@ -102,7 +102,9 @@ const UserInformation = () => {
           <Box ml="5">
             <Heading
               as="h3"
-              color={selectedColor ? selectedColor.color : 'black'}
+              color={
+                selectedColor && isGamified ? selectedColor.color : 'black'
+              }
             >
               {profileData?.username}
             </Heading>

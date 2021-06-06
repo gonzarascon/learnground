@@ -9,11 +9,14 @@ import { Box, Button, Flex } from '@chakra-ui/react';
 import { Heading, Code } from './renderers';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
-import { useCourseStore, useUserStore } from '@/lib/store';
+import { useCourseStore, useStore, useUserStore } from '@/lib/store';
 import { updateSubscriber } from '@/lib/firebase/dataFunctions';
 
 const Markdown = ({ source = '' }) => {
   const router = useRouter();
+  const [isGamified] = useStore((state) => [
+    state.appType === 'gamified' ? true : false,
+  ]);
   const [isFirstClass, setIsFirstClass] = useState(false);
   const [isLastClass, setIsLastClass] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -115,6 +118,7 @@ const Markdown = ({ source = '' }) => {
       roundedBottomLeft="lg"
       position="relative"
       height="100%"
+      w="100%"
     >
       <Box p="10" height="100%" bgColor="white" overflowY="auto" pb="80px">
         <ReactMarkdown renderers={renderers} plugins={[gfm, gemoji]}>
