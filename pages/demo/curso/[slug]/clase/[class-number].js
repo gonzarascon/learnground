@@ -4,13 +4,15 @@ import { DemoLayout } from '@/components';
 import { ClassView } from '@/containers';
 import { getContentByNumber } from '@/lib/firebase/dataFunctionsNode';
 import { useContentStore } from '@/lib/store';
+import { useRouter } from 'next/router';
 
 function GamificadoCourse({ data }) {
+  const router = useRouter();
   const setContent = useContentStore((state) => state.setContent);
 
   useEffect(() => {
     setContent(data);
-  }, [setContent]);
+  }, [setContent, router.asPath]);
   return (
     <DemoLayout isCourse>
       <ClassView source={data.data} />
