@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { Flex, Grid, Skeleton } from '@chakra-ui/react';
+import { Flex, Skeleton } from '@chakra-ui/react';
 
 import { useStore } from '@/lib/store';
 import { ChatRoom, Markdown } from '@/components';
@@ -10,10 +9,6 @@ function ClassView({ source = '' }) {
   const [isGamified] = useStore((state) => [
     state.appType === 'gamified' ? true : false,
   ]);
-
-  //TODO: handle layout change based on appType
-
-  console.log(isGamified);
 
   return (
     <Skeleton isLoaded={source}>

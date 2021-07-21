@@ -78,7 +78,7 @@ const LoginContainer = () => {
         <FormControl my={3}>
           <FormLabel>Email</FormLabel>
           <Input
-            type="text"
+            type="email"
             onChange={(e) => handleInputChange('email', e.target.value)}
           />
         </FormControl>
@@ -90,7 +90,11 @@ const LoginContainer = () => {
           />
         </FormControl>
 
-        <Button colorScheme="green" onClick={handleLogin}>
+        <Button
+          colorScheme="green"
+          disabled={loginData.email === '' || loginData.password === ''}
+          onClick={handleLogin}
+        >
           Iniciar sesión
         </Button>
 

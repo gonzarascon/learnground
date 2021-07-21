@@ -21,6 +21,7 @@ const ChatMessage = ({
       key={id}
       initial={{ opacity: 0, y: 50, scale: 0.3 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 50, transition: { duration: 0.1 } }}
       maxW="95%"
       alignSelf={owned ? 'flex-end' : 'flex-start'}
       mb="5"
