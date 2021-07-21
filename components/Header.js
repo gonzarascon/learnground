@@ -13,7 +13,7 @@ import { AvatarMenu, ProgressIndicator } from '@/components';
 import { useCourseStore, useStore, useUserStore } from '@/lib/store';
 
 const Header = ({ version, isCourse }) => {
-  const [progress, setProgress] = useState();
+  const [progress, setProgress] = useState(0);
   const [loggedIn, isGamified] = useStore((state) => [
     state.loggedIn,
     state.appType === 'gamified' ? true : false,

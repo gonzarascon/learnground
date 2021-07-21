@@ -38,7 +38,6 @@ const ClassList = () => {
                 d="flex"
                 key={content.uid}
                 alignItems="center"
-                _hover={!isActive && { backgroundColor: 'blue.200' }}
                 p="2"
                 rounded="md"
                 mb="2"

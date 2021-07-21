@@ -51,6 +51,10 @@ const LoginContainer = () => {
       );
   };
 
+  const isEmailValid = signupData.email !== '';
+  const isPasswordValid = signupData.password.length >= 6;
+  const isUsernameValid = signupData.username !== '';
+
   return (
     <Flex align="center" h="calc(100vh - 94px - 21px)">
       <Flex
@@ -68,7 +72,7 @@ const LoginContainer = () => {
         <FormControl my={3}>
           <FormLabel>Email</FormLabel>
           <Input
-            type="text"
+            type="email"
             onChange={(e) => handleInputChange('email', e.target.value)}
             placeholder="usuario@ejemplo.com"
             value={signupData.email}
@@ -95,7 +99,11 @@ const LoginContainer = () => {
           </FormHelperText>
         </FormControl>
 
-        <Button colorScheme="green" onClick={handleSignup}>
+        <Button
+          colorScheme="green"
+          disabled={!isEmailValid || !isPasswordValid || !isUsernameValid}
+          onClick={handleSignup}
+        >
           Registrarme
         </Button>
       </Flex>

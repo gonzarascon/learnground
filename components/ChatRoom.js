@@ -10,7 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
 
 import { ChatMessage } from '@/components';
 import { useContentStore, useProfileStore, useUserStore } from '@/lib/store';
@@ -20,6 +20,7 @@ import {
   useChatRoom,
 } from '@/lib/firebase/dataFunctions';
 import { EventsEnum } from '@/lib/events';
+import { useRouter } from 'next/router';
 
 const ChatRoom = () => {
   const [chatMessages, setChatMessages] = useState([]);
@@ -28,6 +29,7 @@ const ChatRoom = () => {
   const messagesContainer = useRef(null);
   const selectedColor = useProfileStore((state) => state.selectedColor);
   const chatId = useContentStore((state) => state.chatId);
+  const router = useRouter();
   const [uid, username] = useUserStore((state) => [
     state.uid,
     state.user.username,
@@ -48,6 +50,8 @@ const ChatRoom = () => {
       }
 
       setChatMessages(docsArr);
+    } else {
+      setChatMessages([]);
     }
   };
 
@@ -71,7 +75,7 @@ const ChatRoom = () => {
 
       return () => unsubscribe();
     }
-  }, [chatId]);
+  }, [chatId, router]);
 
   useEffect(() => {
     if (chatMessages.length && messagesContainer) {
@@ -127,22 +131,24 @@ const ChatRoom = () => {
         <AnimatePresence>
           {chatMessages.length > 0 && (
             <AnimateSharedLayout>
-              {chatMessages.map((message) => {
-                const isOwned = message.user.uid === uid;
-                return (
-                  <ChatMessage
-                    owned={isOwned}
-                    key={message.text}
-                    id={`messages_${message.uid}`}
-                    message={message.text}
-                    createdAt={message.createdAt}
-                    username={message.user.username}
-                    usernameColor={
-                      isOwned && selectedColor ? selectedColor : 'black'
-                    }
-                  />
-                );
-              })}
+              <motion.ul exit={{ opacity: 0 }} layout>
+                {chatMessages.map((message) => {
+                  const isOwned = message.user.uid === uid;
+                  return (
+                    <ChatMessage
+                      owned={isOwned}
+                      key={message.text}
+                      id={`messages_${message.uid}`}
+                      message={message.text}
+                      createdAt={message.createdAt}
+                      username={message.user.username}
+                      usernameColor={
+                        isOwned && selectedColor ? selectedColor : 'black'
+                      }
+                    />
+                  );
+                })}
+              </motion.ul>
             </AnimateSharedLayout>
           )}
         </AnimatePresence>
