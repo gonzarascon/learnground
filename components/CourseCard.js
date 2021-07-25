@@ -1,22 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
+import Link from 'next/link';
 
 function CourseCard({ title = '', slug = '', image = '' }) {
-  const [coursePath, setCoursePath] = useState('');
-  const router = useRouter();
-
-  useEffect(() => {
-    const path = `/demo/curso/${slug}`;
-    setCoursePath(path);
-    router.prefetch(path);
-  }, []);
-
-  const handleButtonClick = () => {
-    router.push(coursePath);
-  };
   return (
     <Box
       rounded="lg"
@@ -39,15 +27,18 @@ function CourseCard({ title = '', slug = '', image = '' }) {
           {title}
         </Heading>
         <Flex wrap="nowrap" align="center" justify="space-between">
-          <Button
-            colorScheme="blue"
-            variant="solid"
-            color="white"
-            mt="3"
-            onClick={() => handleButtonClick()}
-          >
-            Comenzar
-          </Button>
+          <Link href={`/demo/curso/${slug}`}>
+            <Button
+              colorScheme="blue"
+              variant="solid"
+              color="white"
+              mt="3"
+              as="a"
+              cursor="pointer"
+            >
+              Comenzar
+            </Button>
+          </Link>
         </Flex>
       </Box>
     </Box>
