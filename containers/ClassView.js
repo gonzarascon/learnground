@@ -18,6 +18,8 @@ function ClassView({ source = '' }) {
         maxH="927px"
         height="calc(100vh - 21px - 89px)"
         wrap="nowrap"
+        maxWidth={{ xxxl: '80vw' }}
+        ml={{ xxxl: 'auto' }}
       >
         <Markdown source={source} />
         {isGamified && <ChatRoom />}
