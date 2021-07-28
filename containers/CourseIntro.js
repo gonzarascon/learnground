@@ -80,7 +80,7 @@ const CourseIntro = () => {
     }
   }, [toClass, loggedIn, courseData]);
 
-  const handleBadge = () => {
+  const handleBadge = async () => {
     const badgeToEarn = missionsDataset.find(
       (obj) => obj.pk === 'first_subscribed_course'
     );
@@ -91,7 +91,7 @@ const CourseIntro = () => {
       });
 
       const { badgeId, xpAmmount } = badgeToEarn;
-      updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+      await updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
         setBadge(badgeId);
       });
     } else {
@@ -103,7 +103,7 @@ const CourseIntro = () => {
         });
 
         const { badgeId, xpAmmount } = badgeToEarn;
-        updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
+        await updateBadgeAndXP(uid, badgeId, xpAmmount).then(() => {
           setBadge(badgeId);
         });
       }
@@ -119,7 +119,7 @@ const CourseIntro = () => {
     );
 
     if (!checkSubscribed) {
-      handleBadge();
+      await handleBadge();
       registerEvent(EventsEnum.SUBSCRIBE_USER, {
         [EventsEnum.SUBSCRIBE_USER]: uid,
       });

@@ -102,6 +102,8 @@ function SettingsView() {
     router.push(`/demo/perfil/${settingsData.username}`);
   };
 
+  console.log(purchasedItems);
+
   return (
     <Box
       position="relative"
@@ -150,9 +152,9 @@ function SettingsView() {
         <Divider orientation="horizontal" />
         <Box my="5">
           <Heading as="h4" fontSize="xl" color="gray.500" mb="3">
-            Títulos e insignias
+            Configuración de perfil
           </Heading>
-          <Flex align="center" wrap="nowrap">
+          {/* <Flex align="center" wrap="nowrap">
             <Text mr="5" flex="0 1 auto">
               Titulo del perfil
             </Text>
@@ -167,21 +169,25 @@ function SettingsView() {
                 onChange={(obj) => handleChange(obj, 'title')}
               />
             </Box>
-          </Flex>
+          </Flex> */}
           <Flex align="center" wrap="nowrap" mt={5}>
             <Text mr="5" flex="0 1 auto">
               Color de usuario
             </Text>
             <Box w="100%" flex="1">
               <Select
-                placeholder="Selecciona una insignia..."
+                placeholder="Selecciona un color..."
                 options={purchasedItems ? purchasedItems : []}
                 noOptionsMessage={() =>
                   '¡Aún no has desbloqueado colores! Visita la tienda para adquirirlos 😊'
                 }
                 defaultValue={selectedColor}
                 onChange={(obj) => handleChange(obj, 'pins')}
-                isOptionSelected={(obj) => obj.text === selectedColor.text}
+                isOptionSelected={(obj) => {
+                  return obj && selectedColor
+                    ? obj.text === selectedColor.text
+                    : undefined;
+                }}
                 getOptionLabel={(o) => {
                   const uppercaseText =
                     o.text.charAt(0).toUpperCase() + o.text.slice(1);

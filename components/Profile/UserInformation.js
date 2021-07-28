@@ -87,7 +87,7 @@ const UserInformation = () => {
     if (profileData && isGamified) {
       setUserLevel(parseXPToLevel(profileData.xp));
     }
-  }, [isGamified]);
+  }, [isGamified, profileData]);
 
   return (
     <Box gridArea="info" maxW="441px">
